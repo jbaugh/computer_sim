@@ -32,7 +32,7 @@ class OpCode
   end
 
   def self.get_byte(command)
-    OpCode.list.index(command)
+    OpCode.list.index(command.upcase)
   end
 
 end

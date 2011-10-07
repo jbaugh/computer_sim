@@ -1,6 +1,6 @@
 
 load 'register.rb'
-load 'op_codes.rb'
+load 'op_code.rb'
 
 class CPU
   attr_accessor :registers
