@@ -28,11 +28,11 @@ class OpCode
   end
 
   def self.get_command(byte)
-    OpCode.list[byte]
+    OpCode.list[byte] || 'NOP'
   end
 
   def self.get_byte(command)
-    OpCode.list.index(command.upcase)
+    OpCode.list.index(command.upcase) || 135
   end
 
 end

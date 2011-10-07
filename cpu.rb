@@ -1,9 +1,9 @@
 
 load 'register.rb'
-load 'op_code.rb'
 
 class CPU
   attr_accessor :registers
+  attr_reader :op
   
   def initialize(computer)
     @computer = computer
@@ -41,11 +41,7 @@ class CPU
 
   # Parse a single line of MIXAL (a single operation)
   def parse_line(line)
-    #LDA ADDR,i(0:5)
-    codes = line.split(' ')
-    @op.value[4] = 
-    @op.value[1] = ''
-
+    @op.from_string(line)
   end
 
   # Once the line has been parsed into logical segments,
