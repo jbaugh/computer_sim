@@ -1,5 +1,6 @@
 
 load 'register.rb'
+load 'op_codes.rb'
 
 class CPU
   attr_accessor :registers
@@ -42,8 +43,9 @@ class CPU
   def parse_line(line)
     #LDA ADDR,i(0:5)
     codes = line.split(' ')
-    @op.value[1] = 
-    
+    @op.value[4] = 
+    @op.value[1] = ''
+
   end
 
   # Once the line has been parsed into logical segments,
