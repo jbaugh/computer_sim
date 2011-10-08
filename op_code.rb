@@ -86,5 +86,10 @@ class OpCode
     return 'JBUS' if command == 'JBUS'
     return 'NUM' if command == 'NUM'
     return 'CHAR' if command == 'CHAR'
+    
+    raise "Unknown command type."
+    
+  rescue
+    return 'NOP'
   end
 end

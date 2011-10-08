@@ -34,4 +34,7 @@ class CPUTest < Test::Unit::TestCase
     assert_equal(Word.default(2), @cpu.registers['I6'].value, 'Register resetting')
   end
 
+  def test_execute_operation
+
+  end
 end

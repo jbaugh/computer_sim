@@ -46,11 +46,17 @@ class CPU
 
   # Executes an operation
   def execute_operation(operation)
-    cmd = operation.get_command
     addr = operation.addr
     i_reg = @registers[operation.index_register]
     m_spec = @registers.mod_spec
-    
-    
+    cmd_type = OpCode.get_command_type(operation.get_command)
+
+    case cmd_type
+    when 'LD'
+      
+    end
+  rescue
+    raise "Invalid operation: \n\t#{operation.inspect} \n\t#{operation.to_s}"
   end
+
 end
