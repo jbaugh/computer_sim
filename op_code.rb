@@ -35,4 +35,56 @@ class OpCode
     OpCode.list.index(command.upcase) || 135
   end
 
+  def self.get_command_type(command)
+    return 'LD' if command.match /^LD\w$/
+    return 'LDN' if command.match /^LD\wN$/
+    return 'ST' if command.match /^ST\w$/
+
+    return 'ADD' if command == 'ADD'
+    return 'SUB' if command == 'SUB'
+    return 'MUL' if command == 'MUL'
+    return 'DIV' if command == 'DIV'
+
+    return 'ENT' if command.match /^ENT\w$/
+    return 'ENN' if command.match /^ENN\w$/
+    return 'INC' if command.match /^INC\w$/
+    return 'DEC' if command.match /^DEC\w$/
+    return 'CMP' if command.match /^CMP\w$/
+
+    return 'JMP' if command == 'JMP'
+    return 'JSJ' if command == 'JSJ'
+    return 'JOV' if command == 'JOV'
+    return 'JNOV' if command == 'JNOV'
+
+    return 'JL' if command == 'JL'
+    return 'JE' if command == 'JE'
+    return 'JG' if command == 'JG'
+    return 'JLE' if command == 'JLE'
+    return 'JNE' if command == 'JNE'
+    return 'JGE' if command == 'JGE'
+
+    return 'JN' if command.match /^J\wN$/
+    return 'JZ' if command.match /^J\wZ$/
+    return 'JP' if command.match /^J\wP$/
+    return 'JNN' if command.match /^J\wNN$/
+    return 'JNZ' if command.match /^J\wNZ$/
+    return 'JNP' if command.match /^J\wNP$/
+
+    return 'MOVE' if command == 'MOVE'
+    return 'SLA' if command == 'SLA'
+    return 'SRA' if command == 'SRA'
+    return 'SLAX' if command == 'SLAX'
+    return 'SRAX' if command == 'SRAX'
+    return 'SLC' if command == 'SLC'
+    return 'SRC' if command == 'SRC'
+    return 'NOP' if command == 'NOP'
+    return 'HLT' if command == 'HLT'
+    return 'IN' if command == 'IN'
+    return 'OUT' if command == 'OUT'
+    return 'IOC' if command == 'IOC'
+    return 'JRED' if command == 'JRED'
+    return 'JBUS' if command == 'JBUS'
+    return 'NUM' if command == 'NUM'
+    return 'CHAR' if command == 'CHAR'
+  end
 end
