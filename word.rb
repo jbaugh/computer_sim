@@ -70,15 +70,11 @@ class Word
   end
 
   def to_s
-    mem = @value[1].to_s
-    mem2 = @value[2].to_s
-    mem2 += '0' if mem2.size == 1
-    mem += mem2
-    
+    mem = self.addr.to_s
     i = @value[3].to_s
-    spc = ModSpec.get_command(@value[4])
+    spc = self.mod_spec
     m_spec = "(#{spc[:l]}:#{spc[:r]})"
-    cmd = OpCode.get_command(@value[5])
+    cmd = self.get_command
 
     return "#{cmd} #{mem},#{i}#{m_spec}"
   end
@@ -133,6 +129,24 @@ class Word
 
   def sign=(v)
     @value[0] = v
+  end
+
+  def addr
+    mem = @value[1].to_s + @value[2].to_s
+    mem += '0' if @value[2].to_s.size == 1
+    return mem.to_i
+  end
+
+  def index_register
+    "I#{@value[3]}"
+  end
+
+  def mod_spec
+    ModSpec.get_command(@value[4])
+  end
+
+  def get_command
+    OpCode.get_command(@value[5])
   end
 
   def negate_sign

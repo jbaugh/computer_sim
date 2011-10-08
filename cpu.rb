@@ -44,15 +44,13 @@ class CPU
     @op.from_string(line)
   end
 
-  # Once the line has been parsed into logical segments,
-  # this method determines what to do with what memory word
-  def parse_code(instruction, memory, fspec)
-    left = 0
-    right = 5
-
-    if fspec && !fspec.empty?
-      left = fspec.split(/:/).first.sub('(', '').to_i
-      right = fspec.split(/:/).last.sub(')', '').to_i
-    end
+  # Executes an operation
+  def execute_operation(operation)
+    cmd = operation.get_command
+    addr = operation.addr
+    i_reg = @registers[operation.index_register]
+    m_spec = @registers.mod_spec
+    
+    
   end
 end
