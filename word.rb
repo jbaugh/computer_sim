@@ -70,7 +70,7 @@ class Word
     @value[5] = OpCode.get_byte(chunks.first)
   end
 
-  def to_s
+  def to_str
     mem = self.addr.to_s
     i = @value[3].to_s
     spc = self.mod_spec

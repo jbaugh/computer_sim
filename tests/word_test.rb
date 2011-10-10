@@ -86,13 +86,13 @@ load 'word.rb'
 
   def test_to_s
     @word.value = ['+', 20, 0, 1, 0, 0]
-    assert_equal('LDA 2000,1(0:5)', @word.to_s, 'Word to string')
+    assert_equal('LDA 2000,1(0:5)', @word.to_str, 'Word to string')
 
     @word.value = ['+', 20, 50, 1, 3, 4]
-    assert_equal('LD3 2050,1(0:2)', @word.to_s, 'Word to string')
+    assert_equal('LD3 2050,1(0:2)', @word.to_str, 'Word to string')
 
     @word.value = ['-', 39, 99, 3, 15, 91]
-    assert_equal('JXNP 3999,3(3:5)', @word.to_s, 'Word to string')
+    assert_equal('JXNP 3999,3(3:5)', @word.to_str, 'Word to string')
   end
 
   def test_self_default

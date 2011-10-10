@@ -25,4 +25,19 @@ class Register
   def overflowed?
     @word.overflowed?
   end
+
+  def greater_than?
+    val = @word.to_i
+    val > 0
+  end
+
+  def equal_to?
+    val = @word.to_i
+    val == 0
+  end
+
+  def less_than?
+    val = @word.to_i
+    val < 0
+  end
 end

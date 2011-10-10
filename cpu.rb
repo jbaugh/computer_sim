@@ -3,7 +3,7 @@ load 'register.rb'
 
 class CPU
   attr_accessor :registers
-  attr_reader :op
+  attr_reader :op, :pc
   
   def initialize(computer)
     @computer = computer
@@ -13,11 +13,13 @@ class CPU
   def reset
     @registers = {}
     @op = Word.new(5)
+    @pc = 0
 
     @registers['A'] = Register.new(5)
     @registers['X'] = Register.new(5)
     @registers['J'] = Register.new(2)
-    @registers['CMP'] = Register.new(3)
+    @registers['CMP'] = Register.new(1)
+    @registers['OV'] = Register.new(1)
 
     @registers['I1'] = Register.new(2)
     @registers['I2'] = Register.new(2)
@@ -28,12 +30,13 @@ class CPU
   end
 
   # Loads a program as a string
-  def load_program(p)
-    @program = p
+  def load_program(program, offset = 0)
+    @program = program
   end
 
   # Execute the program that was previously loaded into memory
-  def execute_program 
+  def execute_program(start = 0)
+    @pc = start
     @program.each_line do |line| 
       self.parse_line(line) 
     end
@@ -74,10 +77,20 @@ class CPU
     when 'INC'
       call_inc(cmd[3], addr, i_reg, m_spec)
     when 'DEC'
-      call_inc(cmd[3], addr, i_reg, m_spec)
+      call_dec(cmd[3], addr, i_reg, m_spec)
+    when 'CMP'
+      call_cmp(cmd[3], addr, i_reg, m_spec)
+    when 'JMP'
+      call_jmp(nil, addr, i_reg, nil)
+    when 'JSJ'
+      call_jsj(nil, addr, i_reg, nil)
+    when 'JOV'
+      call_jov(nil, addr, i_reg, nil)
+    when 'JNOV'
+      call_jnov(nil, addr, i_reg, nil)
     end
   rescue
-    raise "Invalid operation: \n\t#{operation.inspect} \n\t#{operation.to_s}"
+    raise "Invalid operation: \n\t#{operation.inspect} \n\t#{operation.to_str}"
   end
 
   def call_ld(reg_key, addr, i_reg, m_spec)
@@ -136,32 +149,65 @@ class CPU
 
   def call_ent(reg_key, addr, i_reg, m_spec)
     val = get_mem_addr(addr, i_reg)
-
     @registers[reg_key].word.from_int(val)
   end
 
   def call_enn(reg_key, addr, i_reg, m_spec)
     val = get_mem_addr(addr, i_reg)
-
     @registers[reg_key].word.from_int(-val)
   end
 
   def call_inc(reg_key, addr, i_reg, m_spec)
     reg = @registers[reg_key]
-
-    val = get_mem_addr(addr, i_reg)
-    val += reg.word.to_i
-    
+    val = get_mem_addr(addr, i_reg) + reg.word.to_i
     reg.word.from_int(val)
   end
 
   def call_dec(reg_key, addr, i_reg, m_spec)
     reg = @registers[reg_key]
+    val = reg.word.to_i - get_mem_addr(addr, i_reg)
+    reg.word.from_int(val)
+  end
 
-    val = get_mem_addr(addr, i_reg)
-    val += reg.word.to_i
+  def call_cmp(reg_key, addr, i_reg, m_spec)
+    reg = @registers[reg_key]
+    mem_addr = get_mem_addr(addr, i_reg)
 
-    reg.word.from_int(-val)
+    reg_value = reg.word.to_i
+    mem_value = @computer.memory.read(mem_addr, m_spec[:l], m_spec[:r]).to_i
+
+    if reg_value > mem_value
+      @registers['CMP'].value = ['+',1]
+    elsif reg_value == mem_value
+      @registers['CMP'].value = ['+',0]
+    else
+      @registers['CMP'].value = ['-',1]
+    end
+  end
+
+  def call_jmp(reg_key, addr, i_reg, m_spec)
+    mem_addr = get_mem_addr(addr, i_reg)
+    @registers['J'].word.from_int(mem_addr)
+    @pc = mem_addr
+  end
+
+  def call_jsj(reg_key, addr, i_reg, m_spec)
+    mem_addr = get_mem_addr(addr, i_reg)
+    @pc = mem_addr
+  end
+
+  def call_jov(reg_key, addr, i_reg, m_spec)
+    if @registers['OV'].value[1] == 1
+      mem_addr = get_mem_addr(addr, i_reg)
+      @pc = mem_addr
+    end
+  end
+
+  def call_jnov(reg_key, addr, i_reg, m_spec)
+    if @registers['OV'].value[1] == 0
+      mem_addr = get_mem_addr(addr, i_reg)
+      @pc = mem_addr
+    end
   end
 
 private

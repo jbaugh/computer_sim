@@ -24,7 +24,8 @@ class CPUTest < Test::Unit::TestCase
     assert_equal(Word.default(5), @cpu.registers['A'].value, 'Register resetting')
     assert_equal(Word.default(5), @cpu.registers['X'].value, 'Register resetting')
     assert_equal(Word.default(2), @cpu.registers['J'].value, 'Register resetting')
-    assert_equal(Word.default(3), @cpu.registers['CMP'].value, 'Register resetting')
+    assert_equal(Word.default(1), @cpu.registers['CMP'].value, 'Register resetting')
+    assert_equal(Word.default(1), @cpu.registers['OV'].value, 'Register resetting')
 
     assert_equal(Word.default(2), @cpu.registers['I1'].value, 'Register resetting')
     assert_equal(Word.default(2), @cpu.registers['I2'].value, 'Register resetting')
@@ -197,5 +198,83 @@ class CPUTest < Test::Unit::TestCase
     @cpu.registers['I1'].word.from_int(33)
     @cpu.call_inc('I3', 100, @cpu.registers['I1'], ModSpec.get_command(0))
     assert_equal(233, @cpu.registers['I3'].word.to_i, "Incrementing a register")
+  end
+
+  def test_call_dec
+    @cpu.registers['A'].reset
+    @cpu.call_dec('A', 2000, nil, ModSpec.get_command(0))
+    assert_equal(-2000, @cpu.registers['A'].word.to_i, "Decrementing a register")
+
+    @cpu.registers['A'].word.from_int(100)
+    @cpu.call_dec('A', 750, nil, ModSpec.get_command(0))
+    assert_equal(-650, @cpu.registers['A'].word.to_i, "Decrementing a register")
+
+    @cpu.registers['I3'].word.from_int(100)
+    @cpu.registers['I1'].word.from_int(33)
+    @cpu.call_dec('I3', 100, @cpu.registers['I1'], ModSpec.get_command(0))
+    assert_equal(-33, @cpu.registers['I3'].word.to_i, "Decrementing a register")
+  end
+
+  def test_call_cmp
+    @cpu.registers['A'].word.from_int(300)
+    @computer.memory.storage[2000].from_int(150)
+    @cpu.call_cmp('A', 2000, nil, ModSpec.get_command(0))
+    assert_equal(true, @cpu.registers['CMP'].greater_than?, "Greater than?")
+    assert_equal(false, @cpu.registers['CMP'].less_than?, "Less than?")
+    assert_equal(false, @cpu.registers['CMP'].equal_to?, "Equal to?")
+
+    @cpu.registers['A'].word.from_int(-33)
+    @computer.memory.storage[2000].from_int(-33)
+    @cpu.call_cmp('A', 2000, nil, ModSpec.get_command(0))
+    assert_equal(false, @cpu.registers['CMP'].greater_than?, "Greater than?")
+    assert_equal(false, @cpu.registers['CMP'].less_than?, "Less than?")
+    assert_equal(true, @cpu.registers['CMP'].equal_to?, "Equal to?")
+
+    @cpu.registers['A'].word.from_int(-15)
+    @computer.memory.storage[2000].from_int(150)
+    @cpu.call_cmp('A', 2000, nil, ModSpec.get_command(0))
+    assert_equal(false, @cpu.registers['CMP'].greater_than?, "Greater than?")
+    assert_equal(true, @cpu.registers['CMP'].less_than?, "Less than?")
+    assert_equal(false, @cpu.registers['CMP'].equal_to?, "Equal to?")
+  end
+
+  def test_call_jmp
+    @cpu.call_jmp(nil, 2000, nil, nil)
+    assert_equal(2000, @cpu.registers['J'].word.to_i, "Jump register")
+    assert_equal(2000, @cpu.pc, "Program counter")
+    
+    @cpu.registers['I1'].word.from_int(50)
+    @cpu.call_jmp(nil, 100, @cpu.registers['I1'], nil)
+    assert_equal(150, @cpu.registers['J'].word.to_i, "Jump register")
+    assert_equal(150, @cpu.pc, "Program counter")
+  end
+
+  def test_call_jsj
+    @cpu.call_jsj(nil, 2000, nil, nil)
+    assert_equal(Word.default(2), @cpu.registers['J'].word.value, "Jump register")
+    assert_equal(2000, @cpu.pc, "Program counter")
+    
+    @cpu.registers['I1'].word.from_int(50)
+    @cpu.call_jsj(nil, 100, @cpu.registers['I1'], nil)
+    assert_equal(Word.default(2), @cpu.registers['J'].word.value, "Jump register")
+    assert_equal(150, @cpu.pc, "Program counter")
+  end
+
+  def test_call_jov
+    @cpu.registers['OV'].value[1] = 1
+    @cpu.call_jov(nil, 100, nil, nil)
+    assert_equal(100, @cpu.pc, "Program counter")
+
+    @cpu.registers['I1'].word.from_int(50)
+    @cpu.call_jov(nil, 100, @cpu.registers['I1'], nil)
+    assert_equal(150, @cpu.pc, "Program counter")
+
+    @cpu.registers['OV'].value[1] = 0
+    @cpu.call_jov(nil, 100, nil, nil)
+    assert_equal(150, @cpu.pc, "Program counter doesnt change if not overflowed")
+
+    @cpu.registers['I1'].word.from_int(50)
+    @cpu.call_jov(nil, 100, @cpu.registers['I1'], nil)
+    assert_equal(150, @cpu.pc, "Program counter doesnt change if not overflowed")
   end
 end
