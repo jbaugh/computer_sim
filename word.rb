@@ -54,14 +54,15 @@ class Word
     chunks = line.split(' ')
     
     comma_index = chunks.last.index(',')
-    addr = chunks.last[0..comma_index]
+    addr = chunks.last[0..comma_index - 1]
     spec = chunks.last[comma_index + 1..-1]
     
     paren_index = spec.index('(')
-    i_spec = spec[0..paren_index]
+    i_spec = spec[0..paren_index - 1]
     m_spec = spec[paren_index..-1]
 
     mem_locs = parse_memory_address(addr)
+
     @value[1] = mem_locs.first.to_i
     @value[2] = mem_locs.last.to_i
     @value[3] = parse_index_spec(i_spec)

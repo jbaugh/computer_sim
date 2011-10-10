@@ -27,6 +27,10 @@ load 'word.rb'
  
     @word.value = ['-',0,0,0,1,31]
     assert_equal(-131, @word.to_i, 'Negative word to integer')
+
+    @word = Word.new(2)
+    @word.value = ['+',1,31]
+    assert_equal(131, @word.to_i, 'Smaller word to integer')
   end
 
   def test_from_int
@@ -70,6 +74,14 @@ load 'word.rb'
     assert_equal(3, @word.value[3], 'Parse from string')
     assert_equal(15, @word.value[4], 'Parse from string')
     assert_equal(91, @word.value[5], 'Parse from string')
+
+    @word.from_string('LDA 21,0(0:5)')
+    assert_equal('+', @word.value[0], 'Parse from string')
+    assert_equal(0, @word.value[1], 'Parse from string')
+    assert_equal(21, @word.value[2], 'Parse from string')
+    assert_equal(0, @word.value[3], 'Parse from string')
+    assert_equal(0, @word.value[4], 'Parse from string')
+    assert_equal(0, @word.value[5], 'Parse from string')
   end
 
   def test_to_s

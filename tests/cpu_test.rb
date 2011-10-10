@@ -34,7 +34,54 @@ class CPUTest < Test::Unit::TestCase
     assert_equal(Word.default(2), @cpu.registers['I6'].value, 'Register resetting')
   end
 
-  def test_execute_operation
+  def test_call_ld
+    @computer.memory.storage[2000].value = ['+',0,1,2,3,4]
+    @cpu.call_ld('A', 2000, 0, ModSpec.get_command(0))
+    assert_equal(['+',0,1,2,3,4], @cpu.registers['A'].value, 'Simple ld')
 
+    @computer.memory.storage[2000].value = ['+',2,1,2,3,4]
+    @cpu.call_ld('A', 2000, 0, ModSpec.get_command(0))
+    assert_equal(['+',2,1,2,3,4], @cpu.registers['A'].value, 'Simple ld')
+
+    @computer.memory.storage[2000].value = ['+',2,1,2,3,4]
+    @cpu.call_ld('A', 2000, 0, ModSpec.get_command(9))
+    assert_equal(['+',2,1,0,0,0], @cpu.registers['A'].value, 'Simple ld')
+
+    @computer.memory.storage[2000].value = ['+',2,1,2,3,4]
+    @cpu.call_ld('A', 2000, 0, ModSpec.get_command(13))
+    assert_equal(['+',0,1,2,0,0], @cpu.registers['A'].value, 'Simple ld')
+  end
+
+  def test_call_ldn
+    @computer.memory.storage[2000].value = ['+',0,1,2,3,4]
+    @cpu.call_ldn('A', 2000, 0, ModSpec.get_command(0))
+    assert_equal(['-',0,1,2,3,4], @cpu.registers['A'].value, 'Simple ldn')
+
+    @computer.memory.storage[2000].value = ['-',2,1,2,3,4]
+    @cpu.call_ldn('A', 2000, 0, ModSpec.get_command(0))
+    assert_equal(['+',2,1,2,3,4], @cpu.registers['A'].value, 'Simple ldn')
+
+    @computer.memory.storage[2000].value = ['+',2,1,2,3,4]
+    @cpu.call_ldn('A', 2000, 0, ModSpec.get_command(9))
+    assert_equal(['-',2,1,0,0,0], @cpu.registers['A'].value, 'Simple ldn')
+
+    @computer.memory.storage[2000].value = ['+',2,1,2,3,4]
+    @cpu.call_ldn('A', 2000, 0, ModSpec.get_command(13))
+    assert_equal(['-',0,1,2,0,0], @cpu.registers['A'].value, 'Simple ldn')
+  end
+
+  def test_call_st
+    @word = @computer.memory.storage[2000]
+    @register = @cpu.registers['A']
+    
+    @word.reset
+    @register.value = ['+',0,1,2,3,4]
+    @cpu.call_st('A', 2000, 0, ModSpec.get_command(0))
+    assert_equal(['+',0,1,2,3,4], @word.value, 'Simple st')
+
+    @word.reset
+    @register.value = ['+',4,1,0,3,1]
+    @cpu.call_st('A', 2000, 0, ModSpec.get_command(9))
+    assert_equal(['+',4,1,0,0,0], @word.value, 'Simple st')
   end
 end

@@ -46,17 +46,40 @@ class CPU
 
   # Executes an operation
   def execute_operation(operation)
+    cmd = operation.get_command
     addr = operation.addr
     i_reg = @registers[operation.index_register]
     m_spec = @registers.mod_spec
-    cmd_type = OpCode.get_command_type(operation.get_command)
+    cmd_type = OpCode.get_command_type(cmd)
 
     case cmd_type
     when 'LD'
-      
+      call_ld(cmd[2], addr, i_reg, m_spec)
+    when 'LDN'
+      call_ldn(cmd[2], addr, i_reg, m_spec)
+    when 'ST'
+      call_st(cmd[2], addr, i_reg, m_spec)
     end
   rescue
     raise "Invalid operation: \n\t#{operation.inspect} \n\t#{operation.to_s}"
+  end
+
+  def call_ld(reg_key, addr, i_reg, m_spec)
+    reg = @registers[reg_key]
+    mem_addr = addr + @registers[i_reg].to_i
+    reg.value = @computer.memory.read(mem_addr, m_spec[:l], m_spec[:r]).value
+  end
+
+  def call_ldn(reg_key, addr, i_reg, m_spec)
+    call_ld(reg_key, addr, i_reg, m_spec)
+    reg = @registers[reg_key]
+    reg.word.negate_sign
+  end
+
+  def call_st(reg_key, addr, i_reg, m_spec)
+    reg = @registers[reg_key]
+    mem_addr = addr + @registers[i_reg].to_i
+    @computer.memory.write(mem_addr, reg.value, m_spec[:l], m_spec[:r])
   end
 
 end
