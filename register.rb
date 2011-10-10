@@ -20,7 +20,6 @@ class Register
 
   def reset
     @word = Word.new(@size)
-    @overflow = Word.new@size
   end
 
   def overflowed?

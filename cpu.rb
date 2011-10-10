@@ -59,6 +59,22 @@ class CPU
       call_ldn(cmd[2], addr, i_reg, m_spec)
     when 'ST'
       call_st(cmd[2], addr, i_reg, m_spec)
+    when 'ADD'
+      call_add(nil, addr, i_reg, m_spec)
+    when 'SUB'
+      call_sub(nil, addr, i_reg, m_spec)
+    when 'MUL'
+      call_mul(nil, addr, i_reg, m_spec)
+    when 'DIV'
+      call_div(nil, addr, i_reg, m_spec)
+    when 'ENT'
+      call_ent(cmd[3], addr, i_reg, m_spec)
+    when 'ENN'
+      call_enn(cmd[3], addr, i_reg, m_spec)
+    when 'INC'
+      call_inc(cmd[3], addr, i_reg, m_spec)
+    when 'DEC'
+      call_inc(cmd[3], addr, i_reg, m_spec)
     end
   rescue
     raise "Invalid operation: \n\t#{operation.inspect} \n\t#{operation.to_s}"
@@ -66,7 +82,8 @@ class CPU
 
   def call_ld(reg_key, addr, i_reg, m_spec)
     reg = @registers[reg_key]
-    mem_addr = addr + @registers[i_reg].to_i
+    mem_addr = get_mem_addr(addr, i_reg)
+
     reg.value = @computer.memory.read(mem_addr, m_spec[:l], m_spec[:r]).value
   end
 
@@ -78,8 +95,80 @@ class CPU
 
   def call_st(reg_key, addr, i_reg, m_spec)
     reg = @registers[reg_key]
-    mem_addr = addr + @registers[i_reg].to_i
+    mem_addr = get_mem_addr(addr, i_reg)
+
     @computer.memory.write(mem_addr, reg.value, m_spec[:l], m_spec[:r])
   end
 
+  def call_add(reg_key, addr, i_reg, m_spec)
+    mem_addr = get_mem_addr(addr, i_reg)
+
+    adder = @computer.memory.read(mem_addr, m_spec[:l], m_spec[:r])
+    sum = @registers['A'].word.to_i + adder.to_i
+    @registers['A'].word.from_int(sum)
+  end
+
+  def call_sub(reg_key, addr, i_reg, m_spec)
+    mem_addr = get_mem_addr(addr, i_reg)
+
+    adder = @computer.memory.read(mem_addr, m_spec[:l], m_spec[:r])
+    sum = @registers['A'].word.to_i - adder.to_i
+    @registers['A'].word.from_int(sum)
+  end
+
+  def call_mul(reg_key, addr, i_reg, m_spec)
+    mem_addr = get_mem_addr(addr, i_reg)
+
+    adder = @computer.memory.read(mem_addr, m_spec[:l], m_spec[:r])
+    sum = @registers['A'].word.to_i * adder.to_i
+    @registers['A'].word.from_int(sum)
+  end
+
+  def call_div(reg_key, addr, i_reg, m_spec)
+    mem_addr = get_mem_addr(addr, i_reg)
+
+    adder = @computer.memory.read(mem_addr, m_spec[:l], m_spec[:r])
+    num1 = @registers['A'].word.to_i
+    num2 = adder.to_i
+    @registers['A'].word.from_int(num1 / num2)
+    @registers['X'].word.from_int(num1 % num2)
+  end
+
+  def call_ent(reg_key, addr, i_reg, m_spec)
+    val = get_mem_addr(addr, i_reg)
+
+    @registers[reg_key].word.from_int(val)
+  end
+
+  def call_enn(reg_key, addr, i_reg, m_spec)
+    val = get_mem_addr(addr, i_reg)
+
+    @registers[reg_key].word.from_int(-val)
+  end
+
+  def call_inc(reg_key, addr, i_reg, m_spec)
+    reg = @registers[reg_key]
+
+    val = get_mem_addr(addr, i_reg)
+    val += reg.word.to_i
+    
+    reg.word.from_int(val)
+  end
+
+  def call_dec(reg_key, addr, i_reg, m_spec)
+    reg = @registers[reg_key]
+
+    val = get_mem_addr(addr, i_reg)
+    val += reg.word.to_i
+
+    reg.word.from_int(-val)
+  end
+
+private
+
+  def get_mem_addr(addr, i_reg)
+    mem_addr = addr
+    mem_addr += i_reg.word.to_i if i_reg
+    mem_addr
+  end
 end

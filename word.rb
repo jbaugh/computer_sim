@@ -143,7 +143,7 @@ class Word
   end
 
   def mod_spec
-    ModSpec.get_command(@value[4])
+    ModSpec.get_command(value[4])
   end
 
   def get_command
