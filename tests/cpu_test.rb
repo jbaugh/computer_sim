@@ -448,26 +448,50 @@ class CPUTest < Test::Unit::TestCase
   end
 
   def test_call_sla
-    @cpu.call_sla(nil, 5, nil, 8)
+    @cpu.registers['A'].word.value = ['+',1,2,3,4,5]
+    @cpu.call_sla(nil, 1, nil, 0)
+    assert_equal(['+',2,3,4,5,0], @cpu.registers['A'].word.value, "Shifting to the left")
+
+    @cpu.registers['A'].word.value = ['+',1,2,3,4,5]
+    @cpu.call_sla(nil, 2, nil, 0)
+    assert_equal(['+',3,4,5,0,0], @cpu.registers['A'].word.value, "Shifting to the left 2 times")
   end
 
   def test_call_sra
-    @cpu.call_sra(nil, 5, nil, 8)
+    @cpu.registers['A'].word.value = ['+',1,2,3,4,5]
+    @cpu.call_sra(nil, 1, nil, 0)
+    assert_equal(['+',0,1,2,3,4], @cpu.registers['A'].word.value, "Shifting to the right")
+
+    @cpu.registers['A'].word.value = ['+',1,2,3,4,5]
+    @cpu.call_sra(nil, 2, nil, 0)
+    assert_equal(['+',0,0,1,2,3], @cpu.registers['A'].word.value, "Shifting to the right 2 times")
   end
 
   def test_call_slax
-    @cpu.call_slax(nil, 5, nil, 8)
+    @cpu.call_slax(nil, 5, nil, 0)
   end
 
   def test_call_srax
-    @cpu.call_srax(nil, 5, nil, 8)
+    @cpu.call_srax(nil, 5, nil, 0)
   end
 
   def test_call_slc
-    @cpu.call_slc(nil, 5, nil, 8)
+    @cpu.registers['A'].word.value = ['+',1,2,3,4,5]
+    @cpu.call_slc(nil, 1, nil, 0)
+    assert_equal(['+',2,3,4,5,1], @cpu.registers['A'].word.value, "Rotating to the left")
+
+    @cpu.registers['A'].word.value = ['+',1,2,3,4,5]
+    @cpu.call_slc(nil, 2, nil, 0)
+    assert_equal(['+',3,4,5,1,2], @cpu.registers['A'].word.value, "Rotating to the left 2 times")
   end
 
   def test_call_src
-    @cpu.call_src(nil, 5, nil, 8)
+    @cpu.registers['A'].word.value = ['+',1,2,3,4,5]
+    @cpu.call_src(nil, 1, nil, 0)
+    assert_equal(['+',5,1,2,3,4], @cpu.registers['A'].word.value, "Rotating to the right")
+
+    @cpu.registers['A'].word.value = ['+',1,2,3,4,5]
+    @cpu.call_src(nil, 2, nil, 0)
+    assert_equal(['+',4,5,1,2,3], @cpu.registers['A'].word.value, "Rotating to the right 2 times")
   end
 end

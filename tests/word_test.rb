@@ -155,4 +155,28 @@ load 'word.rb'
     assert_equal(0, @word.parse_mod_spec('(3:2)'), 'Parse modification spec')
   end
 
+  def test_shift_left
+    @word.value = ['+',1,2,3,4,5]
+    @word.shift_left
+    assert_equal(['+',2,3,4,5,0], @word.value, "Shift left")
+  end
+
+  def test_shift_right
+    @word.value = ['+',1,2,3,4,5]
+    @word.shift_right
+    assert_equal(['+',0,1,2,3,4], @word.value, "Shift right")
+  end
+
+  def test_rotate_left
+    @word.value = ['+',1,2,3,4,5]
+    @word.rotate_left
+    assert_equal(['+',2,3,4,5,1], @word.value, "Rotate left")
+  end
+
+  def test_rotate_right
+    @word.value = ['+',1,2,3,4,5]
+    @word.rotate_right
+    assert_equal(['+',5,1,2,3,4], @word.value, "Rotate right")
+  end
+
  end

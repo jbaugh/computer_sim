@@ -327,32 +327,38 @@ class CPU
 
   def call_sla(reg_key, addr, i_reg, m_spec)
     mem_addr = get_mem_addr(addr, i_reg)
-    puts "#{__method__} unfnished."
+    (1..mem_addr).each do |i|
+      @registers['A'].word.shift_left
+    end
   end
 
   def call_sra(reg_key, addr, i_reg, m_spec)
     mem_addr = get_mem_addr(addr, i_reg)
-    puts "#{__method__} unfnished."
+    (1..mem_addr).each do |i|
+      @registers['A'].word.shift_right
+    end
   end
 
   def call_slax(reg_key, addr, i_reg, m_spec)
     mem_addr = get_mem_addr(addr, i_reg)
-    puts "#{__method__} unfnished."
   end
 
   def call_srax(reg_key, addr, i_reg, m_spec)
     mem_addr = get_mem_addr(addr, i_reg)
-    puts "#{__method__} unfnished."
   end
 
   def call_slc(reg_key, addr, i_reg, m_spec)
     mem_addr = get_mem_addr(addr, i_reg)
-    puts "#{__method__} unfnished."
+    (1..mem_addr).each do |i|
+      @registers['A'].word.rotate_left
+    end
   end
 
   def call_src(reg_key, addr, i_reg, m_spec)
     mem_addr = get_mem_addr(addr, i_reg)
-    puts "#{__method__} unfnished."
+    (1..mem_addr).each do |i|
+      @registers['A'].word.rotate_right
+    end
   end
 
 private
