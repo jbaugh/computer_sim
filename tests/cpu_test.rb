@@ -263,11 +263,11 @@ class CPUTest < Test::Unit::TestCase
   def test_call_jov
     @cpu.registers['OV'].value[1] = 1
     @cpu.call_jov(nil, 100, nil, nil)
-    assert_equal(100, @cpu.pc, "Program counter")
+    assert_equal(100, @cpu.pc, "Program counter changes if overflowed")
 
     @cpu.registers['I1'].word.from_int(50)
     @cpu.call_jov(nil, 100, @cpu.registers['I1'], nil)
-    assert_equal(150, @cpu.pc, "Program counter")
+    assert_equal(150, @cpu.pc, "Program counter changes if overflowed")
 
     @cpu.registers['OV'].value[1] = 0
     @cpu.call_jov(nil, 100, nil, nil)
@@ -276,5 +276,104 @@ class CPUTest < Test::Unit::TestCase
     @cpu.registers['I1'].word.from_int(50)
     @cpu.call_jov(nil, 100, @cpu.registers['I1'], nil)
     assert_equal(150, @cpu.pc, "Program counter doesnt change if not overflowed")
+  end
+
+  def test_call_jnov
+    @cpu.registers['OV'].value[1] = 0
+    @cpu.call_jnov(nil, 100, nil, nil)
+    assert_equal(100, @cpu.pc, "Program counter changes if not overflowed")
+
+    @cpu.registers['I1'].word.from_int(50)
+    @cpu.call_jnov(nil, 100, @cpu.registers['I1'], nil)
+    assert_equal(150, @cpu.pc, "Program counter changes if not overflowed")
+
+    @cpu.registers['OV'].value[1] = 1
+    @cpu.call_jnov(nil, 100, nil, nil)
+    assert_equal(150, @cpu.pc, "Program counter doesnt change if overflowed")
+
+    @cpu.registers['I1'].word.from_int(50)
+    @cpu.call_jnov(nil, 100, @cpu.registers['I1'], nil)
+    assert_equal(150, @cpu.pc, "Program counter doesnt change if overflowed")
+  end
+
+  def test_call_jl
+    @cpu.registers['CMP'].value = ['-',1]
+    @cpu.call_jl(nil, 150, nil, nil)
+    assert_equal(150, @cpu.pc, "Jump if cmp is less")
+
+    @cpu.pc = 0
+    @cpu.registers['CMP'].value = ['+',1]
+    @cpu.call_jl(nil, 150, nil, nil)
+    assert_equal(0, @cpu.pc, "Dont jump if cmp is greater")
+  end
+
+  def test_call_je
+    @cpu.registers['CMP'].value = ['-',0]
+    @cpu.call_je(nil, 150, nil, nil)
+    assert_equal(150, @cpu.pc, "Jump if cmp is equal")
+
+    @cpu.pc = 0
+    @cpu.registers['CMP'].value = ['+',1]
+    @cpu.call_je(nil, 150, nil, nil)
+    assert_equal(0, @cpu.pc, "Dont jump if cmp is not equal")
+  end
+
+  def test_call_jg
+    @cpu.registers['CMP'].value = ['+',1]
+    @cpu.call_jg(nil, 150, nil, nil)
+    assert_equal(150, @cpu.pc, "Jump if cmp is greater")
+
+    @cpu.pc = 0
+    @cpu.registers['CMP'].value = ['-',1]
+    @cpu.call_jg(nil, 150, nil, nil)
+    assert_equal(0, @cpu.pc, "Dont jump if cmp is lesser")
+  end
+
+  def test_call_jle
+    @cpu.registers['CMP'].value = ['-',1]
+    @cpu.call_jle(nil, 150, nil, nil)
+    assert_equal(150, @cpu.pc, "Jump if cmp is less")
+
+    @cpu.pc = 0
+    @cpu.registers['CMP'].value = ['-',0]
+    @cpu.call_jle(nil, 150, nil, nil)
+    assert_equal(150, @cpu.pc, "Jump if cmp is equal")
+
+    @cpu.pc = 0
+    @cpu.registers['CMP'].value = ['+',1]
+    @cpu.call_jle(nil, 150, nil, nil)
+    assert_equal(0, @cpu.pc, "Dont jump if cmp is greater")
+  end
+
+  def test_call_jne
+    @cpu.registers['CMP'].value = ['-',1]
+    @cpu.call_jne(nil, 150, nil, nil)
+    assert_equal(150, @cpu.pc, "Jump if cmp is not equal")
+
+    @cpu.pc = 0
+    @cpu.registers['CMP'].value = ['_',1]
+    @cpu.call_jne(nil, 150, nil, nil)
+    assert_equal(150, @cpu.pc, "Jump if cmp is not equal")
+
+    @cpu.pc = 0
+    @cpu.registers['CMP'].value = ['+',0]
+    @cpu.call_jne(nil, 150, nil, nil)
+    assert_equal(0, @cpu.pc, "Dont jump if cmp is equal")
+  end
+
+  def test_call_jge
+    @cpu.registers['CMP'].value = ['+',1]
+    @cpu.call_jge(nil, 150, nil, nil)
+    assert_equal(150, @cpu.pc, "Jump if cmp is greater")
+
+    @cpu.pc = 0
+    @cpu.registers['CMP'].value = ['+',0]
+    @cpu.call_jge(nil, 150, nil, nil)
+    assert_equal(150, @cpu.pc, "Jump if cmp is equal")
+
+    @cpu.pc = 0
+    @cpu.registers['CMP'].value = ['-',1]
+    @cpu.call_jge(nil, 150, nil, nil)
+    assert_equal(0, @cpu.pc, "Dont jump if cmp is lesser")
   end
 end

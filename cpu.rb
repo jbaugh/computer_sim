@@ -2,8 +2,8 @@
 load 'register.rb'
 
 class CPU
-  attr_accessor :registers
-  attr_reader :op, :pc
+  attr_accessor :registers, :pc
+  attr_reader :op
   
   def initialize(computer)
     @computer = computer
@@ -88,6 +88,18 @@ class CPU
       call_jov(nil, addr, i_reg, nil)
     when 'JNOV'
       call_jnov(nil, addr, i_reg, nil)
+    when 'JL'
+      call_jl(nil, addr, i_reg, nil)
+    when 'JE'
+      call_je(nil, addr, i_reg, nil)
+    when 'JG'
+      call_jg(nil, addr, i_reg, nil)
+    when 'JLE'
+      call_jle(nil, addr, i_reg, nil)
+    when 'JNE'
+      call_jne(nil, addr, i_reg, nil)
+    when 'JGE'
+      call_jge(nil, addr, i_reg, nil)
     end
   rescue
     raise "Invalid operation: \n\t#{operation.inspect} \n\t#{operation.to_str}"
@@ -210,6 +222,48 @@ class CPU
     end
   end
 
+  def call_jl(reg_key, addr, i_reg, m_spec)
+    if @registers['CMP'].less_than?
+      mem_addr = get_mem_addr(addr, i_reg)
+      @pc = mem_addr
+    end
+  end
+
+  def call_je(reg_key, addr, i_reg, m_spec)
+    if @registers['CMP'].equal_to?
+      mem_addr = get_mem_addr(addr, i_reg)
+      @pc = mem_addr
+    end
+  end
+
+  def call_jg(reg_key, addr, i_reg, m_spec)
+    if @registers['CMP'].greater_than?
+      mem_addr = get_mem_addr(addr, i_reg)
+      @pc = mem_addr
+    end
+  end
+
+  def call_jle(reg_key, addr, i_reg, m_spec)
+    if @registers['CMP'].less_than? || @registers['CMP'].equal_to?
+      mem_addr = get_mem_addr(addr, i_reg)
+      @pc = mem_addr
+    end
+  end
+
+  def call_jne(reg_key, addr, i_reg, m_spec)
+    if @registers['CMP'].less_than? || @registers['CMP'].greater_than?
+      mem_addr = get_mem_addr(addr, i_reg)
+      @pc = mem_addr
+    end
+  end
+
+  def call_jge(reg_key, addr, i_reg, m_spec)
+    if @registers['CMP'].greater_than? || @registers['CMP'].equal_to?
+      mem_addr = get_mem_addr(addr, i_reg)
+      @pc = mem_addr
+    end
+  end
+  
 private
 
   def get_mem_addr(addr, i_reg)
