@@ -106,6 +106,26 @@ class CPU
       call_jz(cmd[1], addr, i_reg, m_spec)
     when 'JP'
       call_jp(cmd[1], addr, i_reg, m_spec)
+    when 'JNN'
+      call_jnn(cmd[1], addr, i_reg, m_spec)
+    when 'JNZ'
+      call_jnz(cmd[1], addr, i_reg, m_spec)
+    when 'JNP'
+      call_jnp(cmd[1], addr, i_reg, m_spec)
+    when 'MOVE'
+      call_move(nil, addr, i_reg, m_spec)
+    when 'SLA'
+      call_sla(nil, addr, i_reg, m_spec)
+    when 'SRA'
+      call_sra(nil, addr, i_reg, m_spec)
+    when 'SLAX'
+      call_slax(nil, addr, i_reg, m_spec)
+    when 'SRAX'
+      call_srax(nil, addr, i_reg, m_spec)
+    when 'SLC'
+      call_slc(nil, addr, i_reg, m_spec)
+    when 'SRC'
+      call_src(nil, addr, i_reg, m_spec)
     end
   rescue
     raise "Invalid operation: \n\t#{operation.inspect} \n\t#{operation.to_str}"
@@ -296,6 +316,45 @@ class CPU
       @pc = get_mem_addr(addr, i_reg)
     end
   end
+
+  def call_move(reg_key, addr, i_reg, m_spec)
+    puts "#{__method__} unfnished."
+    mem_addr = get_mem_addr(addr, i_reg)
+    (0..(m_spec - 1)).each do |i|
+      @computer.memory.write(mem_addr + i, Word.default(5))
+    end
+  end
+
+  def call_sla(reg_key, addr, i_reg, m_spec)
+    mem_addr = get_mem_addr(addr, i_reg)
+    puts "#{__method__} unfnished."
+  end
+
+  def call_sra(reg_key, addr, i_reg, m_spec)
+    mem_addr = get_mem_addr(addr, i_reg)
+    puts "#{__method__} unfnished."
+  end
+
+  def call_slax(reg_key, addr, i_reg, m_spec)
+    mem_addr = get_mem_addr(addr, i_reg)
+    puts "#{__method__} unfnished."
+  end
+
+  def call_srax(reg_key, addr, i_reg, m_spec)
+    mem_addr = get_mem_addr(addr, i_reg)
+    puts "#{__method__} unfnished."
+  end
+
+  def call_slc(reg_key, addr, i_reg, m_spec)
+    mem_addr = get_mem_addr(addr, i_reg)
+    puts "#{__method__} unfnished."
+  end
+
+  def call_src(reg_key, addr, i_reg, m_spec)
+    mem_addr = get_mem_addr(addr, i_reg)
+    puts "#{__method__} unfnished."
+  end
+
 private
 
   def get_mem_addr(addr, i_reg)

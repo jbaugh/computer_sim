@@ -442,4 +442,32 @@ class CPUTest < Test::Unit::TestCase
     @cpu.call_jnp('A', 150, nil, 0)
     assert_equal(0, @cpu.pc, "Dont jump if positive")
   end
+
+  def test_call_move
+    @cpu.call_move(nil, 17, nil, 8)
+  end
+
+  def test_call_sla
+    @cpu.call_sla(nil, 5, nil, 8)
+  end
+
+  def test_call_sra
+    @cpu.call_sra(nil, 5, nil, 8)
+  end
+
+  def test_call_slax
+    @cpu.call_slax(nil, 5, nil, 8)
+  end
+
+  def test_call_srax
+    @cpu.call_srax(nil, 5, nil, 8)
+  end
+
+  def test_call_slc
+    @cpu.call_slc(nil, 5, nil, 8)
+  end
+
+  def test_call_src
+    @cpu.call_src(nil, 5, nil, 8)
+  end
 end
