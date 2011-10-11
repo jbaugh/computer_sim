@@ -219,23 +219,23 @@ class CPUTest < Test::Unit::TestCase
     @cpu.registers['A'].word.from_int(300)
     @computer.memory.storage[2000].from_int(150)
     @cpu.call_cmp('A', 2000, nil, ModSpec.get_command(0))
-    assert_equal(true, @cpu.registers['CMP'].greater_than?, "Greater than?")
-    assert_equal(false, @cpu.registers['CMP'].less_than?, "Less than?")
-    assert_equal(false, @cpu.registers['CMP'].equal_to?, "Equal to?")
+    assert_equal(true, @cpu.registers['CMP'].positive?, "Greater than?")
+    assert_equal(false, @cpu.registers['CMP'].negative?, "Less than?")
+    assert_equal(false, @cpu.registers['CMP'].zero?, "Equal to?")
 
     @cpu.registers['A'].word.from_int(-33)
     @computer.memory.storage[2000].from_int(-33)
     @cpu.call_cmp('A', 2000, nil, ModSpec.get_command(0))
-    assert_equal(false, @cpu.registers['CMP'].greater_than?, "Greater than?")
-    assert_equal(false, @cpu.registers['CMP'].less_than?, "Less than?")
-    assert_equal(true, @cpu.registers['CMP'].equal_to?, "Equal to?")
+    assert_equal(false, @cpu.registers['CMP'].positive?, "Greater than?")
+    assert_equal(false, @cpu.registers['CMP'].negative?, "Less than?")
+    assert_equal(true, @cpu.registers['CMP'].zero?, "Equal to?")
 
     @cpu.registers['A'].word.from_int(-15)
     @computer.memory.storage[2000].from_int(150)
     @cpu.call_cmp('A', 2000, nil, ModSpec.get_command(0))
-    assert_equal(false, @cpu.registers['CMP'].greater_than?, "Greater than?")
-    assert_equal(true, @cpu.registers['CMP'].less_than?, "Less than?")
-    assert_equal(false, @cpu.registers['CMP'].equal_to?, "Equal to?")
+    assert_equal(false, @cpu.registers['CMP'].positive?, "Greater than?")
+    assert_equal(true, @cpu.registers['CMP'].negative?, "Less than?")
+    assert_equal(false, @cpu.registers['CMP'].zero?, "Equal to?")
   end
 
   def test_call_jmp
@@ -375,5 +375,71 @@ class CPUTest < Test::Unit::TestCase
     @cpu.registers['CMP'].value = ['-',1]
     @cpu.call_jge(nil, 150, nil, nil)
     assert_equal(0, @cpu.pc, "Dont jump if cmp is lesser")
+  end
+
+  def test_call_jn
+    @cpu.registers['A'].word.from_int(-300)
+    @cpu.call_jn('A', 150, nil, 0)
+    assert_equal(150, @cpu.pc, "Jump if negative")
+
+    @cpu.pc = 0
+    @cpu.registers['A'].word.from_int(300)
+    @cpu.call_jn('A', 150, nil, 0)
+    assert_equal(0, @cpu.pc, "Dont jump if positive")
+  end
+
+  def test_call_jz
+    @cpu.registers['A'].word.from_int(0)
+    @cpu.call_jz('A', 150, nil, 0)
+    assert_equal(150, @cpu.pc, "Jump if zero")
+
+    @cpu.pc = 0
+    @cpu.registers['A'].word.from_int(300)
+    @cpu.call_jz('A', 150, nil, 0)
+    assert_equal(0, @cpu.pc, "Dont jump if not zero")
+  end
+
+  def test_call_jp
+    @cpu.registers['A'].word.from_int(300)
+    @cpu.call_jp('A', 150, nil, 0)
+    assert_equal(150, @cpu.pc, "Jump if positive")
+
+    @cpu.pc = 0
+    @cpu.registers['A'].word.from_int(-300)
+    @cpu.call_jp('A', 150, nil, 0)
+    assert_equal(0, @cpu.pc, "Dont jump if negative")
+  end
+
+  def test_call_jnn
+    @cpu.registers['A'].word.from_int(300)
+    @cpu.call_jnn('A', 150, nil, 0)
+    assert_equal(150, @cpu.pc, "Jump if not negative")
+
+    @cpu.pc = 0
+    @cpu.registers['A'].word.from_int(-300)
+    @cpu.call_jnn('A', 150, nil, 0)
+    assert_equal(0, @cpu.pc, "Dont jump if negative")
+  end
+
+  def test_call_jnz
+    @cpu.registers['A'].word.from_int(50)
+    @cpu.call_jnz('A', 150, nil, 0)
+    assert_equal(150, @cpu.pc, "Jump if not zero")
+
+    @cpu.pc = 0
+    @cpu.registers['A'].word.from_int(0)
+    @cpu.call_jnz('A', 150, nil, 0)
+    assert_equal(0, @cpu.pc, "Dont jump if zero")
+  end
+
+  def test_call_jnp
+    @cpu.registers['A'].word.from_int(0)
+    @cpu.call_jnp('A', 150, nil, 0)
+    assert_equal(150, @cpu.pc, "Jump if not positive")
+
+    @cpu.pc = 0
+    @cpu.registers['A'].word.from_int(17)
+    @cpu.call_jnp('A', 150, nil, 0)
+    assert_equal(0, @cpu.pc, "Dont jump if positive")
   end
 end

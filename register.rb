@@ -26,17 +26,17 @@ class Register
     @word.overflowed?
   end
 
-  def greater_than?
+  def positive?
     val = @word.to_i
     val > 0
   end
 
-  def equal_to?
+  def zero?
     val = @word.to_i
     val == 0
   end
 
-  def less_than?
+  def negative?
     val = @word.to_i
     val < 0
   end
