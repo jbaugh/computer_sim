@@ -341,10 +341,20 @@ class CPU
 
   def call_slax(reg_key, addr, i_reg, m_spec)
     mem_addr = get_mem_addr(addr, i_reg)
+    (1..mem_addr).each do |i|
+      @registers['A'].word.shift_left
+      val = @registers['X'].word.shift_left
+      @registers['A'].word.value[5] = val
+    end
   end
 
   def call_srax(reg_key, addr, i_reg, m_spec)
     mem_addr = get_mem_addr(addr, i_reg)
+    (1..mem_addr).each do |i|
+      val = @registers['A'].word.shift_right
+      @registers['X'].word.shift_right
+      @registers['X'].word.value[1] = val
+    end
   end
 
   def call_slc(reg_key, addr, i_reg, m_spec)

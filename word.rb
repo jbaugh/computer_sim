@@ -112,34 +112,30 @@ class Word
     end
   end
 
-  def shift_left
+  def shift_left(val = 0)
+    old_val = @value[1]
     (1.upto(@size - 1)).each do |i|
       @value[i] = @value[i + 1]
     end
-    @value[@size] = 0
+    @value[@size] = val
+    old_val
   end
 
-  def shift_right
+  def shift_right(val = 0)
+    old_val = @value[@size]
     ((@size - 1).downto(1)).each do |i|
       @value[i + 1] = @value[i]
     end
-    @value[1] = 0
+    @value[1] = val
+    old_val
   end
 
   def rotate_left
-    first_value = @value[1]
-    (1.upto(@size - 1)).each do |i|
-      @value[i] = @value[i + 1]
-    end
-    @value[@size] = first_value
+    shift_left(@value[1])
   end
 
   def rotate_right
-    first_value = @value[@size]
-    ((@size - 1).downto(1)).each do |i|
-      @value[i + 1] = @value[i]
-    end
-    @value[1] = first_value
+    shift_right(@value[@size])
   end
 
   def []i

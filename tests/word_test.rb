@@ -157,14 +157,16 @@ load 'word.rb'
 
   def test_shift_left
     @word.value = ['+',1,2,3,4,5]
-    @word.shift_left
+    val = @word.shift_left
     assert_equal(['+',2,3,4,5,0], @word.value, "Shift left")
+    assert_equal(1, val, 'Shifting returns lost byte')
   end
 
   def test_shift_right
     @word.value = ['+',1,2,3,4,5]
-    @word.shift_right
+    val = @word.shift_right
     assert_equal(['+',0,1,2,3,4], @word.value, "Shift right")
+    assert_equal(5, val, 'Shifting returns lost byte')
   end
 
   def test_rotate_left
