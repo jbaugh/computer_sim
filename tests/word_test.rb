@@ -2,10 +2,10 @@
 require 'test/unit'
 load 'word.rb'
       
- class WordTest < Test::Unit::TestCase
-    def setup
-      @word = Word.new(5)
-    end
+class WordTest < Test::Unit::TestCase
+  def setup
+    @word = Word.new(5)
+  end
   
   def test_to_i
     assert_equal(0, @word.to_i, 'Default word to integer')
