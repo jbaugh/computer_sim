@@ -36,7 +36,7 @@ class Device
       num_of_words = 14
     end
 
-    @storage = Memory.new(@computer, num_of_words)
+    @memory = Memory.new(@computer, num_of_words)
   end
 
   def self.bin_in;   1; end   # 0001
