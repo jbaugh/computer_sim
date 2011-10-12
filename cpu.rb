@@ -126,6 +126,24 @@ class CPU
       call_slc(nil, addr, i_reg, m_spec)
     when 'SRC'
       call_src(nil, addr, i_reg, m_spec)
+    when 'NOP'
+      call_nop(nil, nil, nil, nil)
+    when 'HLT'
+      call_hlt(nil, nil, nil, nil)
+    when 'IN'
+      call_in(nil, addr, i_reg, m_spec)
+    when 'OUT'
+      call_out(nil, addr, i_reg, m_spec)
+    when 'IOC'
+      call_ioc(nil, addr, i_reg, m_spec)
+    when 'JRED'
+      call_jred(nil, addr, i_reg, m_spec)
+    when 'JBUS'
+      call_jbus(nil, addr, i_reg, m_spec)
+    when 'NUM'
+      call_num(nil, addr, i_reg, m_spec)
+    when 'CHAR'
+      call_char(nil, addr, i_reg, m_spec)
     end
   rescue
     raise "Invalid operation: \n\t#{operation.inspect} \n\t#{operation.to_str}"
@@ -413,6 +431,50 @@ class CPU
     (1..mem_addr).each do |i|
       @registers['A'].word.rotate_right
     end
+  end
+
+  # Does nothing
+  def call_nop(reg_key, addr, i_reg, m_spec)
+  end
+
+  # Terminates the program
+  def call_hlt(reg_key, addr, i_reg, m_spec)
+    @pc = nil
+  end
+
+  # Read from a device to memory
+  def call_in(reg_key, addr, i_reg, m_spec)
+
+  end
+
+  # Write from memory to a device
+  def call_out(reg_key, addr, i_reg, m_spec)
+    
+  end
+
+  # Sends a control instruction to a device
+  def call_ioc(reg_key, addr, i_reg, m_spec)
+    
+  end
+
+  # Jump if a device is ready
+  def call_jred(reg_key, addr, i_reg, m_spec)
+    
+  end
+
+  # Jump if a device is busy
+  def call_jbus(reg_key, addr, i_reg, m_spec)
+    
+  end
+
+  # Numerical representation in registers A and X
+  def call_num(reg_key, addr, i_reg, m_spec)
+    
+  end
+
+  # Character representation of registers A and X
+  def call_char(reg_key, addr, i_reg, m_spec)
+    
   end
 
 private
