@@ -526,4 +526,42 @@ class CPUTest < Test::Unit::TestCase
     @cpu.call_src(nil, 2, nil, 0)
     assert_equal(['+',4,5,1,2,3], @cpu.registers['A'].word.value, "Rotating to the right 2 times")
   end
+
+  def test_call_nop
+    assert_equal(2, 1 + 1, "Test that nop doesn't change the laws of mathematics")
+  end
+
+  def test_call_hlt
+    @cpu.pc = 100
+    @cpu.call_hlt(nil, nil, nil, nil)
+    assert_equal(nil, @cpu.pc, "PC is set to nil after a hlt")
+  end
+
+  def test_call_in
+
+  end
+
+  def test_call_out
+
+  end
+
+  def test_call_ioc
+
+  end
+
+  def test_call_jred
+
+  end
+
+  def test_call_jbus
+
+  end
+
+  def test_call_num
+
+  end
+
+  def test_call_char
+
+  end
 end
