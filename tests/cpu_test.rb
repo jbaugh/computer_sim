@@ -444,7 +444,19 @@ class CPUTest < Test::Unit::TestCase
   end
 
   def test_call_move
-    @cpu.call_move(nil, 17, nil, 8)
+    @cpu.registers['I1'].word.from_int(10)
+
+    @computer.memory.storage[10].from_int(150)
+    @cpu.call_move(nil, 20, nil, 1)
+    assert_equal(150, @computer.memory.storage[20].to_i, 'Moving a word')
+
+    @computer.memory.storage[10].from_int(150)
+    @computer.memory.storage[11].from_int(33)
+    @computer.memory.storage[12].from_int(77)
+    @cpu.call_move(nil, 20, nil, 3)
+    assert_equal(150, @computer.memory.storage[20].to_i, 'Moving a word')
+    assert_equal(33, @computer.memory.storage[21].to_i, 'Moving a word')
+    assert_equal(77, @computer.memory.storage[22].to_i, 'Moving a word')
   end
 
   def test_call_sla

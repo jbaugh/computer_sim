@@ -131,6 +131,7 @@ class CPU
     raise "Invalid operation: \n\t#{operation.inspect} \n\t#{operation.to_str}"
   end
 
+  # Loads a block of memory into a register
   def call_ld(reg_key, addr, i_reg, m_spec)
     reg = @registers[reg_key]
     mem_addr = get_mem_addr(addr, i_reg)
@@ -138,12 +139,14 @@ class CPU
     reg.value = @computer.memory.read(mem_addr, m_spec[:l], m_spec[:r]).value
   end
 
+  # Loads a block of memory into a register and negates the sign
   def call_ldn(reg_key, addr, i_reg, m_spec)
     call_ld(reg_key, addr, i_reg, m_spec)
     reg = @registers[reg_key]
     reg.word.negate_sign
   end
 
+  # Stores a register value to memory
   def call_st(reg_key, addr, i_reg, m_spec)
     reg = @registers[reg_key]
     mem_addr = get_mem_addr(addr, i_reg)
@@ -151,6 +154,7 @@ class CPU
     @computer.memory.write(mem_addr, reg.value, m_spec[:l], m_spec[:r])
   end
 
+  # Adds a value to the A register
   def call_add(reg_key, addr, i_reg, m_spec)
     mem_addr = get_mem_addr(addr, i_reg)
 
@@ -159,6 +163,7 @@ class CPU
     @registers['A'].word.from_int(sum)
   end
 
+  # Subtracts a value from the A register
   def call_sub(reg_key, addr, i_reg, m_spec)
     mem_addr = get_mem_addr(addr, i_reg)
 
@@ -167,6 +172,7 @@ class CPU
     @registers['A'].word.from_int(sum)
   end
 
+  # Multiplies a value and the A register
   def call_mul(reg_key, addr, i_reg, m_spec)
     mem_addr = get_mem_addr(addr, i_reg)
 
@@ -175,6 +181,8 @@ class CPU
     @registers['A'].word.from_int(sum)
   end
 
+  # Divides a value and the A register
+  # Stores modulo in X register
   def call_div(reg_key, addr, i_reg, m_spec)
     mem_addr = get_mem_addr(addr, i_reg)
 
@@ -185,28 +193,33 @@ class CPU
     @registers['X'].word.from_int(num1 % num2)
   end
 
+  # Sets register to the address
   def call_ent(reg_key, addr, i_reg, m_spec)
     val = get_mem_addr(addr, i_reg)
     @registers[reg_key].word.from_int(val)
   end
 
+  # Sets register to opposite of the address
   def call_enn(reg_key, addr, i_reg, m_spec)
     val = get_mem_addr(addr, i_reg)
     @registers[reg_key].word.from_int(-val)
   end
 
+  # Increase a register by some value
   def call_inc(reg_key, addr, i_reg, m_spec)
     reg = @registers[reg_key]
     val = get_mem_addr(addr, i_reg) + reg.word.to_i
     reg.word.from_int(val)
   end
 
+  # Decrease a register by some value
   def call_dec(reg_key, addr, i_reg, m_spec)
     reg = @registers[reg_key]
     val = reg.word.to_i - get_mem_addr(addr, i_reg)
     reg.word.from_int(val)
   end
 
+  # Compare memory to register and stores result in CMP register
   def call_cmp(reg_key, addr, i_reg, m_spec)
     reg = @registers[reg_key]
     mem_addr = get_mem_addr(addr, i_reg)
@@ -223,108 +236,132 @@ class CPU
     end
   end
 
+  # Jump and set J register to jump address
   def call_jmp(reg_key, addr, i_reg, m_spec)
     mem_addr = get_mem_addr(addr, i_reg)
     @registers['J'].word.from_int(mem_addr)
     @pc = mem_addr
   end
 
+  # Jump without setting any registers
   def call_jsj(reg_key, addr, i_reg, m_spec)
     @pc = get_mem_addr(addr, i_reg)
   end
 
+  # Jump if there was an overflow
   def call_jov(reg_key, addr, i_reg, m_spec)
     if @registers['OV'].value[1] == 1
       @pc = get_mem_addr(addr, i_reg)
     end
   end
 
+  # Jump if there was no overflow
   def call_jnov(reg_key, addr, i_reg, m_spec)
     if @registers['OV'].value[1] == 0
       @pc = get_mem_addr(addr, i_reg)
     end
   end
 
+  # Jump if last comparise was less than
   def call_jl(reg_key, addr, i_reg, m_spec)
     if @registers['CMP'].negative?
       @pc = get_mem_addr(addr, i_reg)
     end
   end
 
+  # Jump if last comparise was equal
   def call_je(reg_key, addr, i_reg, m_spec)
     if @registers['CMP'].zero?
       @pc = get_mem_addr(addr, i_reg)
     end
   end
 
+  # Jump if last comparise was greater than
   def call_jg(reg_key, addr, i_reg, m_spec)
     if @registers['CMP'].positive?
       @pc = get_mem_addr(addr, i_reg)
     end
   end
 
+  # Jump if last comparise was lesser or equal
   def call_jle(reg_key, addr, i_reg, m_spec)
     if !@registers['CMP'].positive?
       @pc = get_mem_addr(addr, i_reg)
     end
   end
 
+  # Jump if last comparise was not equal
   def call_jne(reg_key, addr, i_reg, m_spec)
     if !@registers['CMP'].zero?
       @pc = get_mem_addr(addr, i_reg)
     end
   end
 
+  # Jump if last comparise was greater or equal
   def call_jge(reg_key, addr, i_reg, m_spec)
     if !@registers['CMP'].negative?
       @pc = get_mem_addr(addr, i_reg)
     end
   end
 
+  # Jump if register is negative
   def call_jn(reg_key, addr, i_reg, m_spec)
     if @registers[reg_key].negative?
       @pc = get_mem_addr(addr, i_reg)
     end
   end
 
+  # Jump if register is zero
   def call_jz(reg_key, addr, i_reg, m_spec)
     if @registers[reg_key].zero?
       @pc = get_mem_addr(addr, i_reg)
     end
   end
 
+  # Jump if register is positive
   def call_jp(reg_key, addr, i_reg, m_spec)
     if @registers[reg_key].positive?
       @pc = get_mem_addr(addr, i_reg)
     end
   end
 
+  # Jump if register is not negative
   def call_jnn(reg_key, addr, i_reg, m_spec)
     if !@registers[reg_key].negative?
       @pc = get_mem_addr(addr, i_reg)
     end
   end
 
+  # Jump if register is not zero
   def call_jnz(reg_key, addr, i_reg, m_spec)
     if !@registers[reg_key].zero?
       @pc = get_mem_addr(addr, i_reg)
     end
   end
 
+  # Jump if register is not positive
   def call_jnp(reg_key, addr, i_reg, m_spec)
     if !@registers[reg_key].positive?
       @pc = get_mem_addr(addr, i_reg)
     end
   end
 
+  # Copies N words from one address to another
+  #
+  # reg_key isn't used
+  # addr + value at i_reg will be starting address for writing
+  # I1 register is the starting address for reading
+  # m_spec is number of words to write
   def call_move(reg_key, addr, i_reg, m_spec)
-    puts "#{__method__} unfnished."
-    mem_addr = get_mem_addr(addr, i_reg)
+    to_addr = get_mem_addr(addr, i_reg)
+    from_addr = @registers['I1'].word.to_i
+
     (0..(m_spec - 1)).each do |i|
-      @computer.memory.write(mem_addr + i, Word.default(5))
+      @computer.memory.write(to_addr + i, @computer.memory.read(from_addr + i))
     end
   end
 
+  # Shift N bytes to the left on the A register
   def call_sla(reg_key, addr, i_reg, m_spec)
     mem_addr = get_mem_addr(addr, i_reg)
     (1..mem_addr).each do |i|
@@ -332,6 +369,7 @@ class CPU
     end
   end
 
+  # Shift N bytes to the right on the A register
   def call_sra(reg_key, addr, i_reg, m_spec)
     mem_addr = get_mem_addr(addr, i_reg)
     (1..mem_addr).each do |i|
@@ -339,6 +377,8 @@ class CPU
     end
   end
 
+  # Shift N bytes to the left, treating A and X registers
+  # as a single word. 
   def call_slax(reg_key, addr, i_reg, m_spec)
     mem_addr = get_mem_addr(addr, i_reg)
     (1..mem_addr).each do |i|
@@ -348,6 +388,8 @@ class CPU
     end
   end
 
+  # Shift N bytes to the right, treating A and X registers
+  # as a single word. 
   def call_srax(reg_key, addr, i_reg, m_spec)
     mem_addr = get_mem_addr(addr, i_reg)
     (1..mem_addr).each do |i|
@@ -357,6 +399,7 @@ class CPU
     end
   end
 
+  # Shift left with carry (rotate) on A register
   def call_slc(reg_key, addr, i_reg, m_spec)
     mem_addr = get_mem_addr(addr, i_reg)
     (1..mem_addr).each do |i|
@@ -364,6 +407,7 @@ class CPU
     end
   end
 
+  # Shift right with carry (rotate) on A register
   def call_src(reg_key, addr, i_reg, m_spec)
     mem_addr = get_mem_addr(addr, i_reg)
     (1..mem_addr).each do |i|
