@@ -1,4 +1,5 @@
 
+load 'tests/computer_test.rb'
 load 'tests/word_test.rb'
 load 'tests/cpu_test.rb'
 load 'tests/memory_test.rb'

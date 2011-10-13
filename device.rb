@@ -38,8 +38,31 @@ class Device
       num_of_words = 0
     end
 
+    @busy = false
     @word_pointer = 0
     @memory = Memory.new(@computer, num_of_words)
+  end
+
+  # Reads a single word from memory at word_pointer
+  def read
+    @busy = true
+    block = memory.read(@word_pointer)
+    @word_pointer += 1
+    @busy = false
+
+    block
+  end
+
+  # Writes a single word to memory at word_pointer
+  def write(word)
+    @busy = true
+    memory.write(@word_pointer, word)
+    @word_pointer += 1
+    @busy = false
+  end
+
+  def busy?
+    @busy
   end
 
   def empty?
@@ -47,7 +70,7 @@ class Device
   end
 
   def can?(io)
-     (io & @io_type) > 0
+    (io & @io_type) > 0
   end
 
   def self.bin_in;   1; end   # 0001

@@ -443,8 +443,10 @@ class CPU
   end
 
   # Read from a device to memory
-  def call_in(reg_key, addr, i_reg, m_spec)
+  def call_in(reg_key, addr, i_reg, device_num)
+    to_addr = get_mem_addr(addr, i_reg)
 
+    
   end
 
   # Write from memory to a device
