@@ -2,8 +2,7 @@
 load 'memory.rb'
 
 class Device
-  attr_reader :memory
-  attr_reader :type, :io_type
+  attr_reader :memory, :type, :io_type, :word_pointer
 
   def initialize(computer, type)
     @computer = computer
@@ -34,9 +33,17 @@ class Device
     when :paper_tape
       @io_type = Device.char_in
       num_of_words = 14
+    when :empty
+      @io_type = nil
+      num_of_words = 0
     end
 
+    @word_pointer = 0
     @memory = Memory.new(@computer, num_of_words)
+  end
+
+  def empty?
+    @type == :empty
   end
 
   def can?(io)
