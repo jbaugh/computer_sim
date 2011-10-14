@@ -56,6 +56,17 @@ class Computer
     @message = "Coult not load device #{slot}"
   end
 
+  def get_device(slot)
+    if slot < 0 || slot > 19
+      raise raise "No device for this slot"
+    end
+    
+    return @devices[slot]
+  rescue
+    @status = Computer.ERROR
+    @message = "Coult not get device #{slot}"
+  end
+
   def remove_device(slot)
     if slot < 0 || slot > 19
       raise raise "No device for this slot"

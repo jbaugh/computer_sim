@@ -450,13 +450,17 @@ class CPU
   end
 
   # Write from memory to a device
-  def call_out(reg_key, addr, i_reg, m_spec)
-    
+  def call_out(reg_key, addr, i_reg, device_num)
+    from_addr = get_mem_addr(addr, i_reg)
+
+
   end
 
   # Sends a control instruction to a device
-  def call_ioc(reg_key, addr, i_reg, m_spec)
-    
+  def call_ioc(reg_key, addr, i_reg, device_num)
+    change_amount = get_mem_addr(addr, i_reg)
+    dev = @computer.get_device(device_num)
+    dev.move_word_pointer(change_amount)
   end
 
   # Jump if a device is ready

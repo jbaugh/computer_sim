@@ -43,11 +43,22 @@ class Device
     @memory = Memory.new(@computer, num_of_words)
   end
 
+  # Move word pointer by some amount
+  def move_word_pointer(amount)
+    if amount == 0
+      @word_pointer = 0
+    else
+      @word_pointer += amount
+      ensure_word_pointer_in_range
+    end
+  end
+
   # Reads a single word from memory at word_pointer
   def read
     @busy = true
     block = memory.read(@word_pointer)
     @word_pointer += 1
+    ensure_word_pointer_in_range
     @busy = false
 
     block
@@ -58,6 +69,7 @@ class Device
     @busy = true
     memory.write(@word_pointer, word)
     @word_pointer += 1
+    ensure_word_pointer_in_range
     @busy = false
   end
 
@@ -71,6 +83,10 @@ class Device
 
   def can?(io)
     (io & @io_type) > 0
+  end
+
+  def ensure_word_pointer_in_range
+    @word_pointer %= memory.storage_amount
   end
 
   def self.bin_in;   1; end   # 0001

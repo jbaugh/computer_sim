@@ -546,7 +546,19 @@ class CPUTest < Test::Unit::TestCase
   end
 
   def test_call_ioc
+    @computer.load_device(3, nil)
 
+    @cpu.call_ioc(nil, 5, nil, 3)
+    assert_equal(5, @computer.get_device(3).word_pointer, 'ioc can move word pointer forward')
+
+    @cpu.call_ioc(nil, -3, nil, 3)
+    assert_equal(2, @computer.get_device(3).word_pointer, 'ioc can move word pointer backward')
+
+    @cpu.call_ioc(nil, 0, nil, 3)
+    assert_equal(0, @computer.get_device(3).word_pointer, 'ioc of 0 resets the word pointer')
+
+    @cpu.call_ioc(nil, -5, nil, 3)
+    assert_equal(95, @computer.get_device(3).word_pointer, 'word pointer is always in valid memory range')    
   end
 
   def test_call_jred
