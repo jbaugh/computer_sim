@@ -77,6 +77,10 @@ class Device
     @busy
   end
 
+  def ready?
+    !busy?
+  end
+
   def empty?
     @type == :empty
   end

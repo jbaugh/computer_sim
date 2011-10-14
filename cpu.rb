@@ -445,15 +445,16 @@ class CPU
   # Read from a device to memory
   def call_in(reg_key, addr, i_reg, device_num)
     to_addr = get_mem_addr(addr, i_reg)
-
-    
+    dev = @computer.get_device(device_num)
+    word = dev.read
+    @computer.memory.write(to_addr, word)
   end
 
   # Write from memory to a device
   def call_out(reg_key, addr, i_reg, device_num)
-    from_addr = get_mem_addr(addr, i_reg)
-
-
+    word = @computer.memory.read( get_mem_addr(addr, i_reg) )
+    dev = @computer.get_device(device_num)
+    dev.write(word)
   end
 
   # Sends a control instruction to a device
@@ -464,13 +465,19 @@ class CPU
   end
 
   # Jump if a device is ready
-  def call_jred(reg_key, addr, i_reg, m_spec)
-    
+  def call_jred(reg_key, addr, i_reg, device_num)
+    dev = @computer.get_device(device_num)
+    if dev.ready?
+      @pc = get_mem_addr(addr, i_reg)
+    end
   end
 
   # Jump if a device is busy
-  def call_jbus(reg_key, addr, i_reg, m_spec)
-    
+  def call_jbus(reg_key, addr, i_reg, device_num)
+    dev = @computer.get_device(device_num)
+    if dev.busy?
+      @pc = get_mem_addr(addr, i_reg)
+    end
   end
 
   # Numerical representation in registers A and X

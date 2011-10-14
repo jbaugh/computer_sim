@@ -51,6 +51,7 @@ class Computer
     end
 
     @devices[slot] = Device.new(self, type)
+    @devices[slot]
   rescue
     @status = Computer.ERROR
     @message = "Coult not load device #{slot}"

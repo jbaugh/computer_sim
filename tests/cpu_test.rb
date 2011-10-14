@@ -538,15 +538,33 @@ class CPUTest < Test::Unit::TestCase
   end
 
   def test_call_in
+    @dev = @computer.load_device(3, nil)
+    @dev.memory.storage[0].value = ['+',1,2,3,4,5]
 
+    @cpu.call_in(nil, 500, nil, 3)
+    assert_equal(['+',1,2,3,4,5], @computer.memory.storage[500].value, 'Reading a word from device')
+
+    @dev.memory.storage[1].value = ['-',3,8,0,2,1]
+    @cpu.call_in(nil, 501, nil, 3)
+    assert_equal(['-',3,8,0,2,1], @computer.memory.storage[501].value, 'Reading a consecutive word from device')
   end
 
   def test_call_out
+    @dev = @computer.load_device(3, nil)
 
+    @computer.memory.storage[100].value = ['+',1,2,3,4,5]
+    @computer.memory.storage[150].value = ['-',9,3,1,0,6]
+
+    @cpu.call_out(nil, 100, nil, 3)
+    assert_equal(['+',1,2,3,4,5], @dev.memory.storage[0].value, 'Writing a word to device')
+
+    @cpu.call_out(nil, 150, nil, 3)
+    assert_equal(['+',1,2,3,4,5], @dev.memory.storage[0].value, 'Writing a word to device')
+    assert_equal(['-',9,3,1,0,6], @dev.memory.storage[1].value, 'Writing a word to device')
   end
 
   def test_call_ioc
-    @computer.load_device(3, nil)
+    @dev = @computer.load_device(3, nil)
 
     @cpu.call_ioc(nil, 5, nil, 3)
     assert_equal(5, @computer.get_device(3).word_pointer, 'ioc can move word pointer forward')
@@ -562,11 +580,17 @@ class CPUTest < Test::Unit::TestCase
   end
 
   def test_call_jred
+    @computer.load_device(3, nil)
 
+    @cpu.call_jred(nil, 50, nil, 3)
+    assert_equal(50, @cpu.pc, "Devices are always ready")
   end
 
   def test_call_jbus
+    @computer.load_device(3, nil)
 
+    @cpu.call_jbus(nil, 50, nil, 3)
+    assert_equal(0, @cpu.pc, "Devices are always ready")
   end
 
   def test_call_num
