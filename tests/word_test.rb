@@ -56,10 +56,10 @@ class WordTest < Test::Unit::TestCase
     assert_equal(true, @word.overflowed?, 'Should overflow')
   end
 
-  def test_from_string
+  def test_from_code
     @word.reset
 
-    @word.from_string('LDA 2000,1(0:5)')
+    @word.from_code('LDA 2000,1(0:5)')
     assert_equal('+', @word.value[0], 'Parse from string')
     assert_equal(20, @word.value[1], 'Parse from string')
     assert_equal(0, @word.value[2], 'Parse from string')
@@ -67,7 +67,7 @@ class WordTest < Test::Unit::TestCase
     assert_equal(0, @word.value[4], 'Parse from string')
     assert_equal(0, @word.value[5], 'Parse from string')
 
-    @word.from_string('JXNP 3999,3(3:5)')
+    @word.from_code('JXNP 3999,3(3:5)')
     assert_equal('+', @word.value[0], 'Parse from string')
     assert_equal(39, @word.value[1], 'Parse from string')
     assert_equal(99, @word.value[2], 'Parse from string')
@@ -75,7 +75,7 @@ class WordTest < Test::Unit::TestCase
     assert_equal(15, @word.value[4], 'Parse from string')
     assert_equal(91, @word.value[5], 'Parse from string')
 
-    @word.from_string('LDA 21,0(0:5)')
+    @word.from_code('LDA 21,0(0:5)')
     assert_equal('+', @word.value[0], 'Parse from string')
     assert_equal(0, @word.value[1], 'Parse from string')
     assert_equal(21, @word.value[2], 'Parse from string')
@@ -84,15 +84,39 @@ class WordTest < Test::Unit::TestCase
     assert_equal(0, @word.value[5], 'Parse from string')
   end
 
-  def test_to_s
+  def test_to_code
     @word.value = ['+', 20, 0, 1, 0, 0]
-    assert_equal('LDA 2000,1(0:5)', @word.to_str, 'Word to string')
+    assert_equal('LDA 2000,1(0:5)', @word.to_code, 'Word to string')
 
     @word.value = ['+', 20, 50, 1, 3, 4]
-    assert_equal('LD3 2050,1(0:2)', @word.to_str, 'Word to string')
+    assert_equal('LD3 2050,1(0:2)', @word.to_code, 'Word to string')
 
     @word.value = ['-', 39, 99, 3, 15, 91]
-    assert_equal('JXNP 3999,3(3:5)', @word.to_str, 'Word to string')
+    assert_equal('JXNP 3999,3(3:5)', @word.to_code, 'Word to string')
+  end
+
+  def test_from_string
+    @word.from_string('hello')
+    assert_equal(['+',34,31,38,38,41], @word.value, 'Testing from string value')
+
+    @word.from_string('foo')
+    assert_equal(['+',0,0,32,41,41], @word.value, 'Testing from string value')
+
+    @word.from_string('baRr#')
+    assert_equal(['+',28,27,18,44,65], @word.value, 'Testing from string value')
+
+    @word.from_string('A')
+    assert_equal(['+',0,0,0,0,1], @word.value, 'Testing from string value')
+
+    @word.from_string('     ')
+    assert_equal(['+',0,0,0,0,0], @word.value, 'Testing from string value')
+
+    @word.from_string('I LOVE LUCY')
+    assert_equal(['+',9,0,12,15,22], @word.value, 'Only counts the first 5 letters')
+  end
+
+  def test_to_string
+
   end
 
   def test_self_default

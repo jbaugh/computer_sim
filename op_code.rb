@@ -1,5 +1,5 @@
-class OpCode
 
+class OpCode
   def self.list
     [
       'LDA', 'LDX', 'LD1', 'LD2', 'LD3', 'LD4', 'LD5', 'LD6',

@@ -38,5 +38,4 @@ load 'computer.rb'
     @computer.load_device(22, nil)
     assert_equal(Computer.ERROR, @computer.status, "Loading a new device out of range")
   end
-
 end

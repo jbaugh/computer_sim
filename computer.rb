@@ -8,6 +8,9 @@ class Computer
   def self.ERROR; :error; end
   def self.IO_WAIT; :io_wait; end
   def self.HALT; :halt; end
+  def self.valid_characters
+    " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@\#$%^&*()_+`~,.<>?/\\|[]{};:'\""
+  end
 
   attr_accessor :status, :message
   attr_accessor :cpu, :memory, :devices

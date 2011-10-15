@@ -44,7 +44,7 @@ class CPU
 
   # Parse a single line of MIXAL (a single operation)
   def parse_line(line)
-    @op.from_string(line)
+    @op.from_code(line)
   end
 
   # Executes an operation
@@ -146,7 +146,7 @@ class CPU
       call_char(nil, addr, i_reg, m_spec)
     end
   rescue
-    raise "Invalid operation: \n\t#{operation.inspect} \n\t#{operation.to_str}"
+    raise "Invalid operation: \n\t#{operation.inspect} \n\t#{operation.to_code}"
   end
 
   # Loads a block of memory into a register

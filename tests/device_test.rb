@@ -80,5 +80,4 @@ load 'device.rb'
     assert_equal(true, @dev.can?(Device.char_in), "Device io capabilities")
     assert_equal(false, @dev.can?(Device.char_out), "Device io capabilities")
   end
-
 end

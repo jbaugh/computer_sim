@@ -50,7 +50,7 @@ class Word
     int_val
   end
 
-  def from_string(line)
+  def from_code(line)
     chunks = line.split(' ')
     
     comma_index = chunks.last.index(',')
@@ -70,7 +70,7 @@ class Word
     @value[5] = OpCode.get_byte(chunks.first)
   end
 
-  def to_str
+  def to_code
     mem = self.addr.to_s
     i = @value[3].to_s
     spc = self.mod_spec
@@ -78,6 +78,23 @@ class Word
     cmd = self.get_command
 
     return "#{cmd} #{mem},#{i}#{m_spec}"
+  end
+
+  def to_string
+
+  end
+
+  def from_string(string)
+    if string.size > @size
+      string = string.slice(0, @size)
+    end
+    
+    self.reset
+    sz = string.size - 1
+
+    0.upto(sz).each do |i|
+      @value[@size - i] = Computer.valid_characters.index(string[sz - i])
+    end
   end
 
   # Parses out the memory address into two
