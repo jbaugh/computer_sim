@@ -116,7 +116,17 @@ class WordTest < Test::Unit::TestCase
   end
 
   def test_to_string
+    @word.value = ['+', 5,17,29,38,51]
+    assert_equal('EQcly', @word.to_string, 'Testing word to string')
 
+    @word.value = ['+', 4,44,47,35,30]
+    assert_equal('Druid', @word.to_string, 'Testing word to string')
+
+    @word.value = ['+', 81,82,0,1,74]
+    assert_equal('?/ A+', @word.to_string, 'Testing word to string')
+
+    @word.value = ['+', 0,0,0,0,74]
+    assert_equal('    +', @word.to_string, 'Testing word to string')
   end
 
   def test_self_default

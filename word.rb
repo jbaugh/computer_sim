@@ -81,7 +81,14 @@ class Word
   end
 
   def to_string
-
+    str = ''
+    1.upto(@size).each do |i|
+      str << Computer.valid_characters[@value[i]]
+    end
+    str
+  rescue
+    @status = Computer.ERROR
+    @message = "Word value out of range for #{@value}"
   end
 
   def from_string(string)
