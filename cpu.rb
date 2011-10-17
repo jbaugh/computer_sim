@@ -480,14 +480,16 @@ class CPU
     end
   end
 
+  # I am not reallt sure what to do with num and char because
+  # all words are: numeric values, character values and 
+  # MIXAL instructions.
+
   # Numerical representation in registers A and X
   def call_num(reg_key, addr, i_reg, m_spec)
-    
   end
 
   # Character representation of registers A and X
   def call_char(reg_key, addr, i_reg, m_spec)
-    
   end
 
 private
