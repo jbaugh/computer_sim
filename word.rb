@@ -3,7 +3,7 @@ load 'op_code.rb'
 load 'mod_spec.rb'
 
 class Word
-  attr_accessor :value
+  attr_accessor :value, :label
   attr_reader :size
 
   def initialize(size)
@@ -52,14 +52,30 @@ class Word
 
   def from_code(line)
     chunks = line.split(' ')
+    self.reset
+
+    # For code that is just the op code
+    if chunks.size == 1
+      @value[5] = OpCode.get_byte(chunks.first)
+      return
+    # For code with a label
+    elsif chunks.size > 3
+      @label = chunks[0]
+      chunks.delete_at(0)
+    end
     
     comma_index = chunks.last.index(',')
     addr = chunks.last[0..comma_index - 1]
     spec = chunks.last[comma_index + 1..-1]
     
     paren_index = spec.index('(')
-    i_spec = spec[0..paren_index - 1]
-    m_spec = spec[paren_index..-1]
+    if(paren_index)
+      i_spec = spec[0..paren_index - 1]
+      m_spec = spec[paren_index..-1]
+    else
+      i_spec = spec
+      m_spec = '(0:5)'
+    end
 
     mem_locs = parse_memory_address(addr)
 
@@ -77,7 +93,12 @@ class Word
     m_spec = "(#{spc[:l]}:#{spc[:r]})"
     cmd = self.get_command
 
-    return "#{cmd} #{mem},#{i}#{m_spec}"
+    lbl_str = ""
+    if @label
+      lbl_str = "#{@label.to_s} "
+    end
+
+    return "#{lbl_str}#{cmd} #{mem},#{i}#{m_spec}"
   end
 
   def to_string

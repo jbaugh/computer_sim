@@ -4,6 +4,7 @@ load 'register.rb'
 class CPU
   attr_accessor :registers, :pc
   attr_reader :op
+  attr_accessor :compile_start, :program_start
   
   def initialize(computer)
     @computer = computer
@@ -144,6 +145,18 @@ class CPU
       call_num(nil, addr, i_reg, m_spec)
     when 'CHAR'
       call_char(nil, addr, i_reg, m_spec)
+
+    # Directives
+    when 'ORIG'
+      call_orig(nil, addr, i_reg, m_spec)
+    when 'EQU'
+      call_equ(nil, addr, i_reg, m_spec)
+    when 'CON'
+      call_con(nil, addr, i_reg, m_spec)
+    when 'ALF'
+      call_alf(nil, addr, i_reg, m_spec)
+    when 'END'
+      call_end(nil, addr, i_reg, m_spec) 
     end
   rescue
     raise "Invalid operation: \n\t#{operation.inspect} \n\t#{operation.to_code}"
@@ -491,6 +504,25 @@ class CPU
   # Character representation of registers A and X
   def call_char(reg_key, addr, i_reg, m_spec)
   end
+
+  # Directive definitions
+  def call_orig(reg_key, addr, i_reg, m_spec)
+    @compile_start = addr
+  end
+
+  def call_equ(reg_key, addr, i_reg, m_spec)
+  end
+
+  def call_con(reg_key, addr, i_reg, m_spec)
+  end
+
+  def call_alf(reg_key, addr, i_reg, m_spec)
+  end
+
+  def call_end(reg_key, addr, i_reg, m_spec)
+    @program_start = addr
+  end
+
 
 private
 

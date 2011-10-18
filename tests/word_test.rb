@@ -60,39 +60,36 @@ class WordTest < Test::Unit::TestCase
     @word.reset
 
     @word.from_code('LDA 2000,1(0:5)')
-    assert_equal('+', @word.value[0], 'Parse from string')
-    assert_equal(20, @word.value[1], 'Parse from string')
-    assert_equal(0, @word.value[2], 'Parse from string')
-    assert_equal(1, @word.value[3], 'Parse from string')
-    assert_equal(0, @word.value[4], 'Parse from string')
-    assert_equal(0, @word.value[5], 'Parse from string')
+    assert_equal(['+',20,0,1,0,0], @word.value, 'Parse from string')
 
     @word.from_code('JXNP 3999,3(3:5)')
-    assert_equal('+', @word.value[0], 'Parse from string')
-    assert_equal(39, @word.value[1], 'Parse from string')
-    assert_equal(99, @word.value[2], 'Parse from string')
-    assert_equal(3, @word.value[3], 'Parse from string')
-    assert_equal(15, @word.value[4], 'Parse from string')
-    assert_equal(91, @word.value[5], 'Parse from string')
+    assert_equal(['+',39,99,3,15,91], @word.value, 'Parse from string')
 
     @word.from_code('LDA 21,0(0:5)')
-    assert_equal('+', @word.value[0], 'Parse from string')
-    assert_equal(0, @word.value[1], 'Parse from string')
-    assert_equal(21, @word.value[2], 'Parse from string')
-    assert_equal(0, @word.value[3], 'Parse from string')
-    assert_equal(0, @word.value[4], 'Parse from string')
-    assert_equal(0, @word.value[5], 'Parse from string')
+    assert_equal(['+',0,21,0,0,0], @word.value, 'Parse from string')
+
+    @word.from_code('HLT')
+    assert_equal(['+',0,0,0,0,136], @word.value, 'Parse from string')
+
+    @word.from_code('JNOV 150,1')
+    assert_equal(['+',1,50,1,0,73], @word.value, 'Parse from string')
   end
 
   def test_to_code
-    @word.value = ['+', 20, 0, 1, 0, 0]
+    @word.value = ['+',20,0,1,0,0]
     assert_equal('LDA 2000,1(0:5)', @word.to_code, 'Word to string')
 
-    @word.value = ['+', 20, 50, 1, 3, 4]
+    @word.value = ['+',20,50,1,3,4]
     assert_equal('LD3 2050,1(0:2)', @word.to_code, 'Word to string')
 
-    @word.value = ['-', 39, 99, 3, 15, 91]
+    @word.value = ['-',39,99,3,15,91]
     assert_equal('JXNP 3999,3(3:5)', @word.to_code, 'Word to string')
+
+    @word.value = ['+',0,0,0,0,136]
+    assert_equal('HLT 0,0(0:5)', @word.to_code, 'Word to string')
+
+    @word.value = ['+',1,50,1,0,73]
+    assert_equal('JNOV 150,1(0:5)', @word.to_code, 'Word to string')
   end
 
   def test_from_string

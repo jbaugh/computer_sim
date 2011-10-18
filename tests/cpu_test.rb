@@ -594,10 +594,28 @@ class CPUTest < Test::Unit::TestCase
   end
 
   def test_call_num
-
   end
 
   def test_call_char
+  end
 
+  def test_call_orig
+
+  end
+
+  def test_call_equ
+    
+  end
+
+  def test_call_con
+    
+  end
+
+  def test_call_alf
+    
+  end
+
+  def test_call_end
+    
   end
 end
