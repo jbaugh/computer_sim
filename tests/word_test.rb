@@ -94,6 +94,10 @@ class WordTest < Test::Unit::TestCase
 
     @word.value = ['+',1,50,1,0,73]
     assert_equal('JNOV 150,1(0:5)', @word.to_code, 'Word to string')
+
+    @word.value = ['+',20,0,1,0,0]
+    @word.label = 'FOO'
+    assert_equal('FOO LDA 2000,1(0:5)', @word.to_code, 'Word to string')
   end
 
   def test_from_string
