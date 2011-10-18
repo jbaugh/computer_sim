@@ -59,7 +59,7 @@ class Word
       @value[5] = OpCode.get_byte(chunks.first)
       return
     # For code with a label
-    elsif chunks.size > 3
+    elsif chunks.size == 3
       @label = chunks[0]
       chunks.delete_at(0)
     end

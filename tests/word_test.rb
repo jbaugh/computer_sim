@@ -73,6 +73,10 @@ class WordTest < Test::Unit::TestCase
 
     @word.from_code('JNOV 150,1')
     assert_equal(['+',1,50,1,0,73], @word.value, 'Parse from string')
+
+    @word.from_code('FOO LDA 2000,1(0:5)')
+    assert_equal(['+',20,0,1,0,0], @word.value, 'Parse from string')
+    assert_equal("FOO", @word.label, 'Parse from string')
   end
 
   def test_to_code
