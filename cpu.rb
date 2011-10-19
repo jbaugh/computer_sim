@@ -4,7 +4,7 @@ load 'register.rb'
 class CPU
   attr_accessor :registers, :pc
   attr_reader :op
-  attr_accessor :compile_start, :program_start
+  attr_accessor :compile_start, :program_start, :symbols
   
   def initialize(computer)
     @computer = computer
@@ -15,6 +15,10 @@ class CPU
     @registers = {}
     @op = Word.new(5)
     @pc = 0
+    @symbols = []
+    @compile_start = 0
+    @program_start = 0
+    @compile_counter = 0
 
     @registers['A'] = Register.new(5)
     @registers['X'] = Register.new(5)
@@ -33,19 +37,66 @@ class CPU
   # Loads a program as a string
   def load_program(program, offset = 0)
     @program = program
+    compile_program(@program)
   end
 
-  # Execute the program that was previously loaded into memory
-  def execute_program(start = 0)
-    @pc = start
+  # Compiles MIXAL into words
+  def compile_program(program)
+    @compile_counter = 0
     @program.each_line do |line| 
       self.parse_line(line) 
     end
   end
 
+  # Execute the program that was previously loaded into memory
+  def execute_program
+    @pc = @program_start
+    
+  end
+
   # Parse a single line of MIXAL (a single operation)
   def parse_line(line)
-    @op.from_code(line)
+    if !check_for_directive(line)
+      
+      @compile_counter += 1
+    end
+  end
+
+  # Checks for MIXAL directives, returns true if there 
+  # is a directive
+  def check_for_directive(line)
+    chunks = line.split(' ')
+    if chunks.include? 'ORIG'
+      @compile_start = chunks.last.to_i
+      @compile_counter = @compile_start
+      return true
+
+    elsif chunks.include? 'EQU'
+      sym = chunks.first
+      val = chunks.last
+      if !@symbols.include? sym
+        @symbols << {sym => val}
+      end
+      return true
+
+    elsif chunks.include? 'CON'
+      val = chunks.last
+      @computer.memory.storage[@pc].from_int(val.to_i)
+      @compile_counter += 1
+      return true
+
+    elsif chunks.include? 'ALF'
+      val = chunks.last
+      @computer.memory.storage[@pc].from_string(val.to_s)
+      @compile_counter += 1
+      return true
+
+    elsif chunks.include? 'END'
+      @program_start = chunks.last.to_i
+      return true
+    end
+
+    return false
   end
 
   # Executes an operation
@@ -145,18 +196,6 @@ class CPU
       call_num(nil, addr, i_reg, m_spec)
     when 'CHAR'
       call_char(nil, addr, i_reg, m_spec)
-
-    # Directives
-    when 'ORIG'
-      call_orig(nil, addr, i_reg, m_spec)
-    when 'EQU'
-      call_equ(nil, addr, i_reg, m_spec)
-    when 'CON'
-      call_con(nil, addr, i_reg, m_spec)
-    when 'ALF'
-      call_alf(nil, addr, i_reg, m_spec)
-    when 'END'
-      call_end(nil, addr, i_reg, m_spec) 
     end
   rescue
     raise "Invalid operation: \n\t#{operation.inspect} \n\t#{operation.to_code}"
@@ -493,7 +532,7 @@ class CPU
     end
   end
 
-  # I am not reallt sure what to do with num and char because
+  # I am not really sure what to do with num and char because
   # all words are: numeric values, character values and 
   # MIXAL instructions.
 
@@ -505,23 +544,9 @@ class CPU
   def call_char(reg_key, addr, i_reg, m_spec)
   end
 
+
   # Directive definitions
-  def call_orig(reg_key, addr, i_reg, m_spec)
-    @compile_start = addr
-  end
-
-  def call_equ(reg_key, addr, i_reg, m_spec)
-  end
-
-  def call_con(reg_key, addr, i_reg, m_spec)
-  end
-
-  def call_alf(reg_key, addr, i_reg, m_spec)
-  end
-
-  def call_end(reg_key, addr, i_reg, m_spec)
-    @program_start = addr
-  end
+  
 
 
 private

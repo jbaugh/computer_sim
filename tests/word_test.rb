@@ -1,6 +1,7 @@
 
 require 'test/unit'
 load 'word.rb'
+load 'computer.rb'
       
 class WordTest < Test::Unit::TestCase
   def setup

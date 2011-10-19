@@ -1,6 +1,7 @@
 
 require 'test/unit'
 load 'device.rb'
+load 'computer.rb'
       
  class DeviceTest < Test::Unit::TestCase
   def setup

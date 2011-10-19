@@ -10,12 +10,17 @@ class CPUTest < Test::Unit::TestCase
 
   def test_parse_line
     @cpu.parse_line('LDA 2000,1(0:5)')
-    assert_equal('+', @cpu.op[0], 'Parse line')
-    assert_equal(20, @cpu.op[1], 'Parse line')
-    assert_equal(0, @cpu.op[2], 'Parse line')
-    assert_equal(1, @cpu.op[3], 'Parse line')
-    assert_equal(0, @cpu.op[4], 'Parse line')
-    assert_equal(0, @cpu.op[5], 'Parse line')
+    #assert_equal(['+',20,0,1,0,0], @cpu.op.value, 'Parse line')
+  end
+
+  def test_check_for_directive
+    assert_equal(true, @cpu.check_for_directive('ORIG 2000'), 'Testing for MIXAL directives')
+    assert_equal(true, @cpu.check_for_directive('SYM EQU 175'), 'Testing for MIXAL directives')
+    assert_equal(true, @cpu.check_for_directive('CON -491'), 'Testing for MIXAL directives')
+    assert_equal(true, @cpu.check_for_directive('ALF HELLO'), 'Testing for MIXAL directives')
+    assert_equal(true, @cpu.check_for_directive('END 150'), 'Testing for MIXAL directives')
+
+    
   end
   
   def test_reset
