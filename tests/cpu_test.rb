@@ -8,19 +8,42 @@ class CPUTest < Test::Unit::TestCase
     @cpu = @computer.cpu
   end
 
-  def test_parse_line
-    @cpu.parse_line('LDA 2000,1(0:5)')
-    #assert_equal(['+',20,0,1,0,0], @cpu.op.value, 'Parse line')
+  def test_compile_program
+    @program = "
+      ORIG 100
+      NOP
+      HLT
+      LDA 1000,0(0:5)
+      END 105
+    "
+
+    @cpu.compile_program(@program)
+    assert_equal(100, @cpu.compile_start, 'Compile start is set correctly')
+    assert_equal(105, @cpu.program_start, 'Program start is set correctly')
+    assert_equal('NOP', @computer.memory.storage[100].get_command,'Compiled code is in correct memory')
+    assert_equal('HLT', @computer.memory.storage[101].get_command,'Compiled code is in correct memory')
+    assert_equal('LDA', @computer.memory.storage[102].get_command,'Compiled code is in correct memory')
   end
 
   def test_check_for_directive
     assert_equal(true, @cpu.check_for_directive('ORIG 2000'), 'Testing for MIXAL directives')
-    assert_equal(true, @cpu.check_for_directive('SYM EQU 175'), 'Testing for MIXAL directives')
-    assert_equal(true, @cpu.check_for_directive('CON -491'), 'Testing for MIXAL directives')
-    assert_equal(true, @cpu.check_for_directive('ALF HELLO'), 'Testing for MIXAL directives')
-    assert_equal(true, @cpu.check_for_directive('END 150'), 'Testing for MIXAL directives')
+    assert_equal(2000, @cpu.compile_start, 'Compiled code should start at ORIG value')
 
-    
+    assert_equal(true, @cpu.check_for_directive('SYM EQU 175'), 'Testing for MIXAL directives')
+    assert_equal('175', @cpu.symbols['SYM'], 'Symbol should be set to value of EQU')
+
+    assert_equal(true, @cpu.check_for_directive('SYM EQU 3/2'), 'Testing for MIXAL directives')
+    assert_equal('3/2', @cpu.symbols['SYM'], 'Symbol should be set to value of EQU')
+
+    assert_equal(true, @cpu.check_for_directive('CON -491'), 'Testing for MIXAL directives')
+    assert_equal(-491, @computer.memory.storage[0].to_i, 'CON sets the current memory to a value')
+    #compile counter is incremented by 1
+
+    assert_equal(true, @cpu.check_for_directive('ALF HELLO'), 'Testing for MIXAL directives')
+    assert_equal('HELLO', @computer.memory.storage[0].to_string, 'ALF sets the current memory to a value')
+
+    assert_equal(true, @cpu.check_for_directive('END 150'), 'Testing for MIXAL directives')
+    assert_equal(150, @cpu.program_start, 'END sets the start of program in memory to be run')
   end
   
   def test_reset

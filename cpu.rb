@@ -15,7 +15,7 @@ class CPU
     @registers = {}
     @op = Word.new(5)
     @pc = 0
-    @symbols = []
+    @symbols = {}
     @compile_start = 0
     @program_start = 0
     @compile_counter = 0
@@ -43,8 +43,8 @@ class CPU
   # Compiles MIXAL into words
   def compile_program(program)
     @compile_counter = 0
-    @program.each_line do |line| 
-      self.parse_line(line) 
+    program.each_line do |line| 
+      self.compile_line(line) 
     end
   end
 
@@ -55,9 +55,11 @@ class CPU
   end
 
   # Parse a single line of MIXAL (a single operation)
-  def parse_line(line)
+  def compile_line(line)
+    return if line.strip.empty?
+    
     if !check_for_directive(line)
-      
+      @computer.memory.storage[@compile_counter].from_code(line)
       @compile_counter += 1
     end
   end
@@ -74,9 +76,7 @@ class CPU
     elsif chunks.include? 'EQU'
       sym = chunks.first
       val = chunks.last
-      if !@symbols.include? sym
-        @symbols << {sym => val}
-      end
+      @symbols[sym] = val
       return true
 
     elsif chunks.include? 'CON'
